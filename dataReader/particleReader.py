@@ -1,0 +1,178 @@
+# -*- coding: utf-8 -*-
+"""
+
+@author: Paul Scherkl
+"""
+
+import h5py
+import numpy as np
+import scipy.constants as const
+import glob
+from dumps                  import Particles
+from dataReader.readerUtils import get_grid_data
+from utils.miscUtils        import copy_object
+
+def load_particles(print_progress, pathToData, dumpNumber, ptclList, gridData):
+    """
+    Main function to control particle loading
+    Creates a copy of the requested Particles object, determines which loading routine to use (depending on user input), and loads data into new Particles object
+    Also, extracts grid information
+    
+    
+    Parameters
+    ----------
+    pathToData: string, required
+            Points to the folder where simulated files are located
+            
+    dumpNumber: int, required
+        Current dump that will be loaded and processed
+        
+    ptclList: list, required
+        Contains [<species name>, <species obj>, <load switch>]
+        
+    gridData: dict, required
+        Empty or partially filled dict that contains grid data
+        
+    Returns
+    -------
+    [A list of particle objects, gridData]
+    """    
+
+    loadedPtclObjs = []
+    
+    for i in range(len(ptclList)):
+        speciesEntry = ptclList[i]
+        if speciesEntry[2]:
+            speciesName = speciesEntry[0]
+            newPtclObj = copy_object(speciesEntry[1], Particles() )
+            
+            
+            #----------------------------------------------------------
+            #     Junction for different loading methods
+            #----------------------------------------------------------
+            if speciesEntry[1].file_kind.lower() == "vsim":
+                newPtclObj, gridData = load_particles_file_vsim( pathToData, dumpNumber, speciesName,  newPtclObj, gridData )
+            
+            
+            
+            if isinstance(newPtclObj, Particles): # loading successful
+                loadedPtclObjs.append(newPtclObj)
+                if print_progress:
+                    print "       " + speciesName + "_" + str(dumpNumber) + " loaded"
+                
+            elif newPtclObj == 0:
+                print ("       (!) Warning: Cannot read particle file " + speciesName + "_" + str(dumpNumber) + ", ignored")
+                
+            elif newPtclObj == 1:
+                print ("       (!) Warning: Particles " + speciesName + "_" + str(dumpNumber) + " not found, ignored")
+
+    return loadedPtclObjs, gridData
+
+
+
+def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridData):
+    """
+    Particle loading routine
+    
+    Parameters
+    ----------
+    pathToData: string, required
+            Points to the folder where simulated files are located
+            
+    dumpNumber: int, required
+        Current dump that will be loaded 
+        
+    speciesName: string, required
+        Name of particles that will be loaded
+    
+    ptclObj: Particles, required
+        Object of type Particles. It's phase space is updated with loaded file
+    
+    gridData: dict, required
+        Empty or partially filled dict that contains grid data
+       
+    Returns
+    -------
+    if loading successful:
+        [ Object of class Particles that contains the 6D phase space obtained from the dump file, gridData]
+    else:
+        [error code, gridData]
+    """    
+    
+    for currentFile in  glob.glob(pathToData + "*" + speciesName + "*_" + str(dumpNumber) + ".*") :
+        if h5py.is_hdf5(currentFile):
+
+            inStream = h5py.File(currentFile)
+            try:
+                speciesMatrix = np.array(inStream[ speciesName ], dtype=np.float32)
+            except:
+                return 0, gridData
+            
+            ptclObj.labels = inStream[ speciesName ].attrs["vsLabels"].split(",")
+
+            NDIM =    inStream[ speciesName ].attrs["numSpatialDims"]
+            ptclObj.numPtclsInMacro = int(round(inStream[ speciesName ].attrs["numPtclsInMacro"]))
+            if "globalGridGlobalLimits" in inStream.keys():
+                ptclObj.xLab = inStream["globalGridGlobalLimits"].attrs["vsLowerBounds"][0]
+            elif "compGridGlobalLimits" in inStream.keys():
+                ptclObj.xLab = inStream["compGridGlobalLimits"].attrs["vsLowerBounds"][0]
+            else:
+                ptclObj.xLab = 0
+            gridData = get_grid_data(inStream, gridData)
+            inStream.close()
+            
+            
+            
+            ptclObj.X      = (speciesMatrix[:,0] - ptclObj.xLab) *1e6
+            ptclObj.Y      = speciesMatrix[:,1]*1e6
+            
+            if NDIM == 3:
+                ptclObj.Z      = speciesMatrix[:,2]*1e6
+                ptclObj.PX     = speciesMatrix[:,3]   
+                ptclObj.PY     = speciesMatrix[:,4]
+                ptclObj.PZ     = speciesMatrix[:,5]
+            elif NDIM == 2:
+                ptclObj.Z      =  np.zeros(len(ptclObj.X))
+                ptclObj.PX     = speciesMatrix[:,2]   
+                ptclObj.PY     = speciesMatrix[:,3]
+                ptclObj.PZ     = speciesMatrix[:,4]
+            
+            
+            if speciesName + "_tag" in ptclObj.labels:
+                ptclObj.Tag = speciesMatrix[:,ptclObj.labels.index(speciesName + "_tag")]
+            else:
+                ptclObj.Tag = np.zeros(len(ptclObj.X))
+                
+            if speciesName + "_weight" in ptclObj.labels:
+                ptclObj.Weight = speciesMatrix[:, ptclObj.labels.index(speciesName + "_weight")]
+            else:
+                ptclObj.Weight    = np.ones(len(ptclObj.X))
+                
+            if np.max(ptclObj.PX) > 0:
+                ptclObj.YP     = ptclObj.PY / ptclObj.PX * 1000
+                ptclObj.ZP     = ptclObj.PZ / ptclObj.PX * 1000
+                ptclObj.YP[np.isnan(ptclObj.YP)] = 0
+                ptclObj.ZP[np.isnan(ptclObj.ZP)] = 0
+            else:
+                ptclObj.YP     = np.zeros(len(ptclObj.PY))
+                ptclObj.ZP     = np.zeros(len(ptclObj.PZ))
+                
+            ptclObj.T      = ptclObj.X / const.speed_of_light * 1e9
+            ptclObj.T      = np.max(ptclObj.T) - ptclObj.T
+            gammaCol        = np.sqrt((ptclObj.PX**2 + ptclObj.PY**2 + ptclObj.PZ**2)/(const.speed_of_light**2))
+            eMassInMeV = const.value("electron mass energy equivalent in MeV"  )
+            ptclObj.E  = eMassInMeV*(np.sqrt(1 + gammaCol**2) - 1)
+            ptclObj.EX = eMassInMeV*(np.sqrt(1 + (ptclObj.PX / const.speed_of_light)**2 - 1))   
+            ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2 - 1))   
+            ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2 - 1))   
+            ptclObj.Etrans = np.sqrt(ptclObj.EY**2 + ptclObj.EZ**2)
+            ptclObj.loaded = 1
+            return ptclObj, gridData
+    
+    return 1, gridData
+    
+
+        
+    
+
+
