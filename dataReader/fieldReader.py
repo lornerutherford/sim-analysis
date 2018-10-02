@@ -121,7 +121,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
                 elif currentSpecies.lower().find("rho")  == 0:
                     fldObj.kind = "chargedens"
                 elif currentSpecies.lower().find("j")  == 0:
-                    fldObj.kind = "currdens"
+                    fldObj.kind = "current"
                 else: 
                     print ("       (!) Warning: Cannot determine kind of field " + currentSpecies + "_" + str(dumpNumber) + ". PicViz assumes electric field. Please set \"kind\" variable if necessary.")
                     fldObj.kind = "electric"

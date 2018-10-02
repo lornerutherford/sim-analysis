@@ -74,7 +74,7 @@ def get_label_from_key(key):
             quantity = "$\mathit{E}$"
         elif quantity == "magnetic":
             quantity = "$\mathit{B}$"
-        elif quantity == "currdens":
+        elif quantity == "current":
             quantity = "$\mathit{J}$"
         elif quantity == "chargedens":
             return "$\mathit{\\rho}$"
@@ -253,8 +253,8 @@ def get_unit_from_component(key):
     elif key.find("magnetic") > -1:
         return "T"
     
-    elif key.find("currdens") > -1:
-        return "A m$^{-3}$"
+    elif key.find("current") > -1:
+        return "A"
     
     elif key.find("chargedens") > -1:
         return "m$^{-3}$"

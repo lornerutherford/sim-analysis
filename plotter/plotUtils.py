@@ -329,7 +329,7 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
         if not outputList.has_key(currentKey):
             outputList[currentKey] = []
 
-            minVal = 0
+        minVal = 0
         maxVal = 0
         if isinstance(obj, (Particles, Field)):
             if obj.loaded:
@@ -337,7 +337,8 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
             else:
                 data = [0,0]
         elif isinstance(obj, (FieldLine, ParticlesLine)):
-                data = get_line_data_field(obj, field, gridData)[1] if isinstance(obj, FieldLine) else get_line_data_particles(obj, particles, gridData)[1]
+                idx = 1 if obj.axis == obj.plane[0] else 0
+                data = get_line_data_field(obj, field, gridData)[idx] if isinstance(obj, FieldLine) else get_line_data_particles(obj, particles, gridData)[idx]
                 if data is None or (isinstance(obj, FieldLine) and not field.loaded) or  (isinstance(obj, ParticlesLine) and not particles.loaded):
                     data = [0,0]
         userRequestSwitch = [0,0] # corresponds to min and max val. 0: no requested clip, 1 = requested clip

@@ -38,7 +38,7 @@ class picVIZ(object):
     """Top level class setting up and executing the main program""" 
     
     
-    def __init__(self, pathToData, dumpNumbers, style = "default", isHeadless = 0):
+    def __init__(self, pathToData, dumpNumbers, outPath = "", style = "default", isHeadless = 0):
         """
 
         Parameters
@@ -54,6 +54,9 @@ class picVIZ(object):
             
         isHeadless: bool, optional
             If set to 0, picViz can run on systems without monitor (e.g. clusters)
+            
+        outPath: string
+            Directory (will be created if not present) where picViz output will be stored
             
         Returns
         -------
@@ -80,7 +83,7 @@ class picVIZ(object):
         utils.mainUtils.print_start_message()
         
         self.pathToData   = pathToData
-        self.outPath      = pathToData
+        self.outPath      = outPath if len(outPath)> 0 else pathToData
         
         
         self.dumpNumbers  = dumpNumbers
