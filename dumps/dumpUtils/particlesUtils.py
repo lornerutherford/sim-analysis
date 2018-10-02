@@ -96,8 +96,7 @@ def get_quantity_from_string(ptclObj, quantity, binSize, line = 0):
     
     elif quantity.lower() == "espread":
         eMean = get_mean(ptclObj.E, ptclObj.Weight) 
-        
-        return get_rms(ptclObj.E, ptclObj.Weight) / eMean if eMean is not 0 else 0
+        return get_rms(ptclObj.E, ptclObj.Weight) / eMean*100 if eMean is not 0 else 0
     
     elif quantity.lower() == "etotal":
         return  np.sum(ptclObj.E * 1e6  * ptclObj.Weight) * const.e * ptclObj.numPtclsInMacro

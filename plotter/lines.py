@@ -39,6 +39,7 @@ class Line(object):
 
 def plot_lines(ax, obj, gridData):
     from dumps import Particles, Field
+    import numpy as np
     
     if obj.lines is not None: 
         
@@ -59,14 +60,15 @@ def plot_lines(ax, obj, gridData):
                     x,y, lineBounds = get_line_data_particles(line, obj, gridData)
                 if x is None: continue
             
-            
-            
-                import numpy as np
-                
+                cellSizeX = 1.0
+                cellSizeY = 1.0
+                if gridData.has_key("cellSize"):
+                    cellSizeX = gridData["cellSize"][0] if line.plane[0] == "x" else gridData["cellSize"][1] if line.plane[0] == "y" else gridData["cellSize"][2]
+                    cellSizeY = gridData["cellSize"][0] if line.plane[1] == "x" else gridData["cellSize"][1] if line.plane[1] == "y" else gridData["cellSize"][2]
             
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
-                    axLine.plot(x, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
+                    axLine.plot(x-0.5*cellSizeX, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
                     
                     axLine.set_ylim(line.tick_min, line.tick_max)
                     
@@ -91,11 +93,10 @@ def plot_lines(ax, obj, gridData):
 
                         c, d = ax.get_ylim()
                         return (c-d)/(a-b)*x + (c-a*d/b)/(1-a/b)
-                    
-                    axLine.plot(x, trafo(y), color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width )
+
+                    axLine.plot(x, trafo(y)-0.5*cellSizeY, color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width )
                     
                     axLine.set_xlim(line.tick_min, line.tick_max)
-                    
                                         
                     axLine.spines['top'].set_visible(False)
                     axLine.spines['right'].set_visible(False)

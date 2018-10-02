@@ -120,7 +120,7 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
     if isinstance(plotter, Plotter2D):
         yRatio = 1
         if plotter.auto_aspect_ratio:
-            yRatio =  ( max(plotter.y_lim) - min(plotter.y_lim) ) / ( max(plotter.x_lim) - min(plotter.x_lim) ) 
+            yRatio =  1.0*( max(plotter.y_lim) - min(plotter.y_lim) ) / ( max(plotter.x_lim) - min(plotter.x_lim) ) 
             plotter.fig_size[0] = plotter.fig_size[1]/yRatio
         fig = plt.figure(figsize = plotter.fig_size) 
         axList.append( fig.add_axes([ 0 ,    0,   1 ,  1]) )
@@ -156,16 +156,16 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
         
                 
                 
-            yStart  = 1 - plotter.axisSpacingY/plotter.fig_height*row - (1 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) - 1))  /  len(plotter.grid)  *  row 
-            yHeight = (1 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) -1))/len(plotter.grid)
-            yRatio  = 1
+            yStart  = 1.0 - plotter.axisSpacingY/plotter.fig_height*row - (1 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) - 1))  /  len(plotter.grid)  *  row 
+            yHeight = (1.0 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) -1))/len(plotter.grid)
+            yRatio  = 1.0
             
             
             xWidth  = 1
             
             if isinstance(plot, Plotter2D):
                 if plot.auto_aspect_ratio:
-                    xWidth = yHeight / ( ( max(plot.y_lim) - min(plot.y_lim) ) / ( max(plot.x_lim) - min(plot.x_lim) ) )
+                    xWidth = yHeight / ( 1.0*( max(plot.y_lim) - min(plot.y_lim) ) / ( max(plot.x_lim) - min(plot.x_lim) ) )
             elif isinstance(plot, PlotterPhaseSpace):
                 xWidth = float(plot.fig_size[0])/plot.fig_size[1] * yHeight 
 

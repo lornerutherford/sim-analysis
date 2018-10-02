@@ -99,7 +99,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
         [error code, gridData]
     """    
     
-    for currentFile in  glob.glob(pathToData + "*" + speciesName + "*_" + str(dumpNumber) + ".*") :
+    for currentFile in  glob.glob(pathToData + "*" + speciesName + "*_" + str(dumpNumber) + ".h5") :
         if h5py.is_hdf5(currentFile):
 
             inStream = h5py.File(currentFile)

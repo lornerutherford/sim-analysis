@@ -143,15 +143,17 @@ class FieldLine(Line):
 
 
 
+
 def plot_field(ax, plotter, field, gridData):
     from dumps.dumpUtils.fieldUtils import get_field_plane, get_field_extent
 
     currentPlane   = get_field_plane(field, gridData)
     xRange, yRange = get_field_extent( field, gridData)
+    
+    
     ax.imshow(currentPlane, cmap = field.colormap, vmin=field.clip_min, vmax = field.clip_max,  aspect='auto', origin='lower', \
               alpha = field.opacity, extent=[np.min(xRange), np.max(xRange), np.min(yRange), np.max(yRange)], zOrder = field.z_order)
             
-
 
 
 

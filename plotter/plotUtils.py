@@ -104,7 +104,7 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
 
         startX = axPos.x1 + ((counter + numLineAxes)*(plotter.colorbarSpacing)/figWidth  )
         startY = axPos.y1 + ((counterTop + 1)*(plotter.colorbarSpacing * 0.5)/figHeight  )
-        endX   = 0.001/figWidth   
+        endX   = 0.001/figWidth 
         endY   = 0.001/figHeight   
 
         targetAxis  =  key.split(",")[1].split(",")[0]
@@ -121,7 +121,8 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
             counter += 1
             
         counterTop += 1
-        axisTop   = fig.add_axes([ axPos.x0, startY, axPos.x1,  endY])
+        
+        axisTop   = fig.add_axes([ axPos.x0, startY, axPos.width,  endY])
         format_line_axis(axisTop,   key, data, kind = "hor")
 
 

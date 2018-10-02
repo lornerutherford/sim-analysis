@@ -103,7 +103,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
     """    
     import scipy.constants as const
     
-    for currentFile in  glob.glob(pathToData + "*" + currentSpecies + "_" + str(dumpNumber) + ".*") :
+    for currentFile in  glob.glob(pathToData + "*" + currentSpecies + "_" + str(dumpNumber) + ".h5") :
         if h5py.is_hdf5(currentFile):
             
             inStream = h5py.File(currentFile)

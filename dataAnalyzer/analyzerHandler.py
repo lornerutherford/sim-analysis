@@ -12,6 +12,9 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
     from utils.miscUtils import create_directory
     from dataAnalyzer import ParticlesAnalyzer, FieldAnalyzer
     from dumps.dumpUtils.particlesUtils import get_quantity_from_string, get_particles_vector_from_string
+    from utils.miscUtils import create_directory
+    
+    
     ptclAnalCounter    = 0
     fldAnalCounter     = 0
     counter            = 0
@@ -20,6 +23,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
 
     for analyzer in analyzerList:
         summaryOutName = analyzer.outPath + "analyzer_" + str(counter) + "_summary.txt" if analyzer.file_name is None else analyzer.outPath + "analyzer_" + analyzer.file_name + "_summary.txt"
+        create_directory(analyzer.outPath)
 
         if analyzer.print_data: 
             print "\n       ----- Analyzer " + str(counter) + " data -----" 
