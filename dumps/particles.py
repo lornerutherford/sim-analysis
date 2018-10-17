@@ -36,6 +36,8 @@ class Particles(Dump):
     
     
     def __init__(self, name = None, index= None,  plane = None, show_ratio = None, opacity =None, z_order = None, marker_size = None, color = None, file_kind = None, plot_data = None):
+        
+        
         Dump.__init__(self, name = name, index = index, plane =plane, z_order=z_order, file_kind = file_kind, plot_data = plot_data)
         
 
@@ -153,7 +155,7 @@ class Particles(Dump):
     
     def cut(self, quantity, val1, val2):        
         """
-        Removes all single particles with given quantity outisde of interval given by val1 and val2
+        Removes all single particles with given quantity outside of interval given by val1 and val2
         
         Parameters
         ----------

@@ -12,7 +12,7 @@ from dumps                  import Particles
 from dataReader.readerUtils import get_grid_data
 from utils.miscUtils        import copy_object
 
-def load_particles(print_progress, pathToData, dumpNumber, ptclList, gridData):
+def load_particles(print_progress, pathToData, dumpNumber, ptclList, loadedPtclObjs, gridData):
     """
     Main function to control particle loading
     Creates a copy of the requested Particles object, determines which loading routine to use (depending on user input), and loads data into new Particles object
@@ -28,7 +28,6 @@ def load_particles(print_progress, pathToData, dumpNumber, ptclList, gridData):
         Current dump that will be loaded and processed
         
     ptclList: list, required
-        Contains [<species name>, <species obj>, <load switch>]
         
     gridData: dict, required
         Empty or partially filled dict that contains grid data
@@ -38,33 +37,30 @@ def load_particles(print_progress, pathToData, dumpNumber, ptclList, gridData):
     [A list of particle objects, gridData]
     """    
 
-    loadedPtclObjs = []
     
-    for i in range(len(ptclList)):
-        speciesEntry = ptclList[i]
-        if speciesEntry[2]:
-            speciesName = speciesEntry[0]
-            newPtclObj = copy_object(speciesEntry[1], Particles() )
+    for ptcl in ptclList:
+        if ptcl.load:
+            newPtclObj = copy_object(ptcl, Particles() )
             
             
             #----------------------------------------------------------
             #     Junction for different loading methods
             #----------------------------------------------------------
-            if speciesEntry[1].file_kind.lower() == "vsim":
-                newPtclObj, gridData = load_particles_file_vsim( pathToData, dumpNumber, speciesName,  newPtclObj, gridData )
+            if ptcl.file_kind.lower() == "vsim":
+                newPtclObj, gridData = load_particles_file_vsim( pathToData, dumpNumber, ptcl.name,  newPtclObj, gridData )
             
             
             
             if isinstance(newPtclObj, Particles): # loading successful
                 loadedPtclObjs.append(newPtclObj)
                 if print_progress:
-                    print "       " + speciesName + "_" + str(dumpNumber) + " loaded"
+                    print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded"
                 
             elif newPtclObj == 0:
-                print ("       (!) Warning: Cannot read particle file " + speciesName + "_" + str(dumpNumber) + ", ignored")
+                print ("       (!) Warning: Cannot read particle file " + ptcl.name + "_" + str(dumpNumber) + ", ignored")
                 
             elif newPtclObj == 1:
-                print ("       (!) Warning: Particles " + speciesName + "_" + str(dumpNumber) + " not found, ignored")
+                print ("       (!) Warning: Particles " + ptcl.name + "_" + str(dumpNumber) + " not found, ignored")
 
     return loadedPtclObjs, gridData
 

@@ -206,7 +206,7 @@ def get_emittance(ptclObj, direction, disp = 0):
     locVec = ptclObj.Y   if direction == "y" else ptclObj.Z
     momVec = ptclObj.PY  if direction == "y" else ptclObj.PZ
     n = np.sum(ptclObj.Weight)
-    if n == 0:
+    if n == 0 or len(ptclObj.Weight) == 0:
         return 0
     
     ySquaredMean            = (1./n)*np.sum(ptclObj.Weight*(locVec**2)) - ((1./n)*np.sum(ptclObj.Weight*locVec))**2
@@ -275,6 +275,8 @@ def make_particles_cuts(ptcl):
         ptcl.Tag = ptcl.Tag[(cutQuantVec >= lower) & (cutQuantVec <= upper)]
         ptcl.Weight = ptcl.Weight[(cutQuantVec >= lower) & (cutQuantVec <= upper)]
     
+
+
 
 def get_particles_plane(particles, plotter):
     plane = particles.plane

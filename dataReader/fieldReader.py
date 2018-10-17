@@ -11,7 +11,7 @@ from dataReader.readerUtils import get_grid_data
 import glob
 
 
-def load_field(print_progress, pathToData, dumpNumber, fldList, gridData):
+def load_field(print_progress, pathToData, dumpNumber, fldList, loadedFldObjs, gridData):
     """
     Main function to control field loading. 
     Creates a copy of the requested Field object, determines which loading routine to use (depending on user input), and loads data into new Field object
@@ -26,7 +26,6 @@ def load_field(print_progress, pathToData, dumpNumber, fldList, gridData):
         Current dump that will be loaded and processed
         
     fldList: list, required
-        Contains [<species name>, <species obj>, <load switch>]
     
         
     gridData: dict, required
@@ -39,13 +38,10 @@ def load_field(print_progress, pathToData, dumpNumber, fldList, gridData):
   
     from utils.miscUtils import copy_object
    
-    loadedFldObjs = []
     
-    for i in range(len(fldList)):
-        speciesEntry = fldList[i]
-        if speciesEntry[2]:
-            speciesName = speciesEntry[0]
-            newFldObj = copy_object(speciesEntry[1], Field() )
+    for fld in fldList:
+        if fld.load:
+            newFldObj = copy_object(fld, Field() )
             
             
             
@@ -53,22 +49,19 @@ def load_field(print_progress, pathToData, dumpNumber, fldList, gridData):
             #----------------------------------------------------------
             #     Junction for different loading methods
             #----------------------------------------------------------
-            if speciesEntry[1].file_kind.lower() == "vsim":
-                newFldObj, gridData = load_field_file_vsim( pathToData, dumpNumber, speciesName, newFldObj,gridData) 
-            
-            
-            
+            if fld.file_kind.lower() == "vsim":
+                newFldObj, gridData = load_field_file_vsim( pathToData, dumpNumber, fld.name, newFldObj,gridData) 
             
             
             if isinstance(newFldObj, Field): # loading successful
                 loadedFldObjs.append(newFldObj)
                 if print_progress:
-                        print "       " + speciesName + "_" + str(dumpNumber) + " loaded"
+                        print "       " + fld.name + "_" + str(dumpNumber) + " loaded"
                         
             elif newFldObj == 0:
-                print ("       (!) Warning: Cannot read field file " + speciesName + "_" + str(dumpNumber) + ", ignored")
+                print ("       (!) Warning: Cannot read field file " + fld.name + "_" + str(dumpNumber) + ", ignored")
             elif newFldObj == 1:
-                print ("       (!) Warning: Field " + speciesName + "_" + str(dumpNumber) + ", not found, ignored")
+                print ("       (!) Warning: Field " + fld.name + "_" + str(dumpNumber) + ", not found, ignored")
 
     return loadedFldObjs, gridData
 

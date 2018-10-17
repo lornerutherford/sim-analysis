@@ -12,10 +12,15 @@ class Dump(object):
     """   
     def __init__(self, name = None, index = None, plane = None, colormap = None, z_order = None, file_kind = None, plot_data = None):
         self.name          = name
-        self.file_kind      = file_kind
+        self.file_kind     = file_kind
         self.index         = index
+        
+        self.load          = 0
         self.loaded        = 0
+        
         self.plane         = plane
+        
+        
         self.plot_data     = plot_data
         self.z_order       = z_order
         
@@ -23,6 +28,7 @@ class Dump(object):
         self.clip_min       = None
         self.clip_max       = None
 
+        self.lines = []
 
         import colormaps as customColMaps
         from matplotlib import pyplot as plt
@@ -34,7 +40,6 @@ class Dump(object):
             self.colormap     = colormap
 
         
-        self.lines = []
 
 
 

@@ -14,7 +14,6 @@ def copy_object(source, target):
     from dumps   import Particles, Field, FieldLine, ParticlesLine
     from plotter import  Plotter2D, PlotterPhaseSpace
     
-    
     for targetProp, targetVal in vars(target).items():
         for sourceProp, sourceVal in vars(source).items():
                 
@@ -38,18 +37,19 @@ def copy_object(source, target):
                         if isinstance(plotterObj, PlotterPhaseSpace):
                             target.plotters.append( copy_object( plotterObj, PlotterPhaseSpace() )  )
                     break          
-                elif targetProp is "lines" and source.lines is not None:
+
+                elif targetProp is "lines":
                     target.lines = []
                     for lineObj in source.lines:
+
                         if isinstance(lineObj, FieldLine):
                             target.lines.append( copy_object( lineObj, FieldLine() )  )
                         if isinstance(lineObj, ParticlesLine):
                             target.lines.append( copy_object( lineObj, ParticlesLine() )  )
-                        
                     break
                 else:
                     if targetVal is None:
-                        if isinstance(sourceVal, list):
+                        if isinstance(sourceVal, (list,tuple, dict)):
                             sourceVal = list(sourceVal)
                         setattr(target, targetProp, sourceVal)
                         break

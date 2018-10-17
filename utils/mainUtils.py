@@ -14,7 +14,7 @@ from utils.miscUtils  import copy_object
 
 def print_start_message():
     print "------------------------------------------------------------------------------------------------------"
-    print " picVisualizer v1.02.02 (2018) by Paul Scherkl (University of Strathclyde, paul.scherkl@strath.ac.uk) "
+    print " picVisualizer v1.02.03 (2018) by Paul Scherkl (University of Strathclyde, paul.scherkl@strath.ac.uk) "
     print "------------------------------------------------------------------------------------------------------"
 
 
@@ -36,6 +36,8 @@ def set_analyzer_copies(globalAnalyzers, loadedPtclObjs, loadedFldObjs):
                     make_particles_cuts(localPtcl)
             newAnalyzers.append( newParticlesAnalyzer )
             
+            
+            
         if isinstance(analyzer, FieldAnalyzer):
             newFieldAnalyzer = copy_object(analyzer, FieldAnalyzer() ) # create copy of PlotterObject including contained Particles objects
             
@@ -48,6 +50,10 @@ def set_analyzer_copies(globalAnalyzers, loadedPtclObjs, loadedFldObjs):
             
             
     return newAnalyzers
+
+
+
+
 
 def setup_plotter_copies(globalplotters, loadedPtclObjs, loadedFldObjs):
     """ 

@@ -61,7 +61,7 @@ def make_plots(plotList, gridData, dumpNumber):
                 
                 if isinstance(plotter, PlotterPhaseSpace):
                     phaseSpaceCounter += 1
-                    plotterPhaseSpace_makeFigure(plotter, fig,  axList[-1])
+                    plotterPhaseSpace_makeFigure(plotter, fig,  axList[-1], gridData)
                 else:
                     plot2DCounter += 1
                     plotter2D_makeFigure(plotter, fig, axList[-1], gridData)
@@ -90,13 +90,10 @@ def make_plots(plotList, gridData, dumpNumber):
                 
             if plotter.save_fig:
                 if isinstance(plotter, PlotterPhaseSpace):
-#                    plt.savefig(plotter.outPath + "PhaseSpace_" + str(phaseSpaceCounter) +"_direction_" + plotter.direction + "_" + str(dumpNumber).rjust(3, "0") + ".png",  dpi= 700, bbox_inches='tight')
                     plt.savefig(plotter.outPath + "PhaseSpace_" + str(phaseSpaceCounter) +"_direction_" + plotter.direction + "_" + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, Plotter2D):
-#                    plt.savefig(plotter.outPath + "Plot2D_" + str(plot2DCounter) + "_" + str(dumpNumber).rjust(3, "0") + ".png",  dpi= 700, bbox_inches='tight')
                     plt.savefig(plotter.outPath + "Plot2D_" + str(plot2DCounter) + "_" + str(dumpNumber)+ ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, MultiPlot):
-#                    plt.savefig(plotter.outPath + "MultiPlot_" + str(multiCounter) + "_" + str(dumpNumber).rjust(3, "0") + ".png",  dpi= 700, bbox_inches='tight')
                     plt.savefig(plotter.outPath + "MultiPlot_" + str(multiCounter) + "_" + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
             plt.show()
                        

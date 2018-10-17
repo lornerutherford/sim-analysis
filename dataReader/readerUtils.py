@@ -10,7 +10,31 @@ import glob
 
 
 
-def load_data(print_progress, print_gridData, pathToData,  dumpNumber, ptclList, fldList):
+
+
+
+def set_load_switches(plotters, analyzers):
+    import itertools
+    
+    for obj in itertools.chain(plotters, analyzers):
+        try:
+            for ptclObj in obj.particles:
+                if ptclObj.plot_data or ptclObj.lines: 
+                    ptclObj.load = 1
+                    continue
+        except: pass                    
+        try:
+            for fldObj in obj.fields:
+                if fldObj.plot_data or fldObj.lines: 
+                    fldObj.load = 1
+                    continue
+        except: pass                    
+    return plotters, analyzers
+
+
+
+
+def load_data(print_progress, print_gridData, pathToData,  dumpNumber, plotters, analyzers):
     """
     Utility function that cordinates loading of particles, fields, and grid data
     
@@ -18,14 +42,21 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, ptclList,
     from dataReader.particleReader      import load_particles
     from dataReader.fieldReader         import load_field
     from dumps.dumpUtils.particlesUtils import make_particles_cuts
+    import itertools
     
     currentGridData = {}
-    if ptclList:
-        particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, ptclList, currentGridData)
-        for ptcl in particleObjList: # perform global cuts directly after loading
-            make_particles_cuts(ptcl)
+    particleObjList = []
+    fieldObjList    = []
+    for obj in itertools.chain(plotters, analyzers):
+        try:
+            particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, obj.particles, particleObjList, currentGridData)
+            for ptcl in particleObjList: make_particles_cuts(ptcl)
+        except: pass
+    
+        try:
+            fieldObjList,   currentGridData  = load_field(print_progress, pathToData, dumpNumber, obj.fields, fieldObjList,currentGridData)
+        except: pass
 
-    fieldObjList,   currentGridData  = load_field(print_progress, pathToData, dumpNumber, fldList, currentGridData)
     
     
     if print_gridData and currentGridData:
@@ -39,7 +70,10 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, ptclList,
 
 
 
-def get_meta_data(print_metaData, pathToData, ptclList, fldList):
+
+
+
+def get_meta_data(print_metaData, pathToData, plotters, analyzers):
     """
     Main function to control meta data loading
     
@@ -62,18 +96,26 @@ def get_meta_data(print_metaData, pathToData, ptclList, fldList):
     dict filled with beautiful meta data       
     """    
     if print_metaData:
-
+        import itertools
         metaData = {}
-        if ptclList:
-            for species in ptclList:
-                if species[2]:
-                    metaData = load_meta_data(pathToData, species[0], metaData)
-                    break
-        if fldList:
-            for species in fldList:
-                if species[2]:
-                    metaData = load_meta_data(pathToData, species[0], metaData)
-                    break
+        
+   
+        for obj in itertools.chain(plotters, analyzers):
+            try:
+                for ptcl in obj.particles:
+                    if ptcl.load:
+                        metaData = load_meta_data(pathToData, ptcl.name, metaData)
+                        break
+            except: pass
+        
+            try:
+                for fld in obj.fields:
+                    if fld.load:
+                        metaData = load_meta_data(pathToData, fld.name, metaData)
+                        break
+            except: pass
+                        
+                
             
         print "\n       -------- Meta Data --------"
         for key in metaData:

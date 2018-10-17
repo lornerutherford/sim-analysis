@@ -17,11 +17,6 @@ import matplotlib
 
 
 
-globalPtclList          = [] # global list not accessible by user. will be filled with entries like [<species name>, <corresponding species obj>, <load switch>] when any Particles object is set up by the user
-globalFldList           = [] # global list not accessible by user. will be filled with entries like [<species name>, <corresponding species obj>, <load switch>] when any Field object is set up by the user
-globalPlotterList       = []
-globalAnalyzerList      = []
-
 
 def default_style():
     matplotlib.rcParams['font.family'] = 'DejaVu Sans'
@@ -88,7 +83,11 @@ class picVIZ(object):
         
         self.dumpNumbers  = dumpNumbers
     
-        
+        self.fldIndex     = 0
+        self.ptclIndex    = 0
+        self.globalPlotterList    = []
+        self.globalAnalyzerList   = []
+
 
         
         
@@ -113,12 +112,13 @@ class picVIZ(object):
         
         from plotter.figureHandler          import make_plots
         from dataAnalyzer.analyzerHandler   import analyze_data
-        from dataReader.readerUtils         import get_meta_data, load_data
+        from dataReader.readerUtils         import set_load_switches,get_meta_data, load_data
         from utils                          import mainUtils
         
         
-        # get meta data once
-        get_meta_data(print_metaData, self.pathToData, globalPtclList, globalFldList)
+        globalPlotterList, globalAnalyzerList = set_load_switches(self.globalPlotterList, self.globalAnalyzerList)
+        
+        get_meta_data(print_metaData, self.pathToData, globalPlotterList, globalAnalyzerList)
         analDataList = [[] for i in range(len(globalAnalyzerList))]
         
         for dumpNumber in self.dumpNumbers:         # start main loop iterating all dump numbers
@@ -126,13 +126,16 @@ class picVIZ(object):
             print ("\n\n       ----- Process dump " + str( dumpNumber) + " -----\n" )
             
             # load particle and field files, collect grid information
-            tmpPtclObjs, tmpFldObjs, tmpGridData = load_data(print_progress, print_gridData, self.pathToData,  dumpNumber, globalPtclList, globalFldList )
+
+            tmpPtclObjs, tmpFldObjs, tmpGridData = load_data(print_progress, print_gridData, self.pathToData,  dumpNumber, globalPlotterList, globalAnalyzerList )
 
             
             
             #analyze loaded data
             tmpAnalyzerList = mainUtils.set_analyzer_copies(globalAnalyzerList, tmpPtclObjs, tmpFldObjs)
             analDataList    = analyze_data(tmpAnalyzerList, tmpGridData, dumpNumber, dumpNumber == self.dumpNumbers[0], analDataList)
+
+
 
             #make figures
             tmpPlotterList = mainUtils.setup_plotter_copies(globalPlotterList, tmpPtclObjs, tmpFldObjs) #TODO: add analyzer plotter 
@@ -191,12 +194,13 @@ class picVIZ(object):
             color= [random.random(), random.random(), random.random()]
 
         
-        newParticlesObj = Particles(species_name, len(globalPtclList), plane = plane, z_order = z_order, \
+#        newParticlesObj = Particles(species_name, len(globalPtclList), plane = plane, z_order = z_order, \
+        newParticlesObj = Particles(species_name, self.ptclIndex, plane = plane, z_order = z_order, \
                                     show_ratio = show_ratio, opacity = opacity, marker_size = marker_size, color = color, \
                                     plot_data = plot_data, file_kind = file_kind)
+        self.ptclIndex += 1
         
         
-        globalPtclList.append( [species_name, newParticlesObj, 0] ) # add new entry for particles. add the object. load switch is off, will be enabled if this object is used in any plotter or analyzer
         return newParticlesObj
         
     
@@ -279,11 +283,11 @@ class picVIZ(object):
             clip_max = max(dummy)
 
 
-        newFieldObj = Field(species_name, index = len(globalFldList), kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
+#        newFieldObj = Field(species_name, index = len(globalFldList), kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
+        newFieldObj = Field(species_name, index = self.fldIndex, kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
                             project = project, opacity = opacity, colormap = colormap, clip_min = clip_min, clip_max = clip_max,  show_colorbar = show_colorbar,\
                             plot_data =plot_data,  z_order = z_order, file_kind = "vsim")
-
-        globalFldList.append( [species_name, newFieldObj, 0] ) # add new entry for particles. add the object. load switch is off, will be enabled if this object is used in any plotter or analyzer
+        self.fldIndex += 1
         return newFieldObj
         
         
@@ -352,12 +356,6 @@ class picVIZ(object):
                 plane = "xy"
             
             
-        for ptclObj in particles: 
-            globalPtclList[ptclObj.index][2] = 1  # switch loading on 
-            
-        for fldObj in fields: 
-            globalFldList[fldObj.index][2]   = 1  # switch loading on 
-
 
         localPtclObj = []
         for globalPtclObj in particles:
@@ -372,7 +370,7 @@ class picVIZ(object):
         newPlotter.outPath = self.outPath
         set_plotter_defaults(newPlotter)
         
-        globalPlotterList.append( newPlotter )
+        self.globalPlotterList.append( newPlotter )
         return  newPlotter
     
     
@@ -423,8 +421,6 @@ class picVIZ(object):
         from dumps   import Particles
         from utils.miscUtils import copy_object
         
-        for ptclObj in particles: 
-            globalPtclList[ptclObj.index][2] = 1  # switch loading on 
             
         localPtclObj = []
         for globalPtclObj in particles:
@@ -435,7 +431,7 @@ class picVIZ(object):
         set_plotter_defaults(newPlotter)
             
         
-        globalPlotterList.append( newPlotter )
+        self.globalPlotterList.append( newPlotter )
         return newPlotter
     
     
@@ -481,7 +477,7 @@ class picVIZ(object):
                 temp_plotList.append( copy_object(plotter, PlotterPhaseSpace() ) )
         newPlotter         = MultiPlot( plotters =temp_plotList, fig_height=fig_height,  grid=grid, make_fig=make_fig, save_fig=save_fig , dpi = dpi )
         newPlotter.outPath = self.outPath
-        globalPlotterList.append( newPlotter )
+        self.globalPlotterList.append( newPlotter )
         return newPlotter
         
 
@@ -545,9 +541,6 @@ class picVIZ(object):
         from utils.miscUtils import copy_object
         from dumps import Particles
         
-        for ptclObj in particles: 
-            globalPtclList[ptclObj.index][2] = 1  # switch loading on 
-            
 
         localPtclObj = []
         for globalPtclObj in particles:
@@ -555,7 +548,7 @@ class picVIZ(object):
             
         newAnalyzer         = ParticlesAnalyzer( localPtclObj, quantityList=quantityList, bin_size = bin_size, print_data=print_data, save_txt = save_txt, save_summary_txt = save_summary_txt, file_name = file_name, use_existing_file=use_existing_file )
         newAnalyzer.outPath = self.outPath
-        globalAnalyzerList.append( newAnalyzer )
+        self.globalAnalyzerList.append( newAnalyzer )
         return newAnalyzer
 
 
@@ -578,7 +571,7 @@ class picVIZ(object):
 #        """
 #        newAnalyzer         = FieldAnalyzer( fields, self.fieldObjList )
 #        newAnalyzer.outPath = self.outPath
-#        globalAnalyzerList.append( newAnalyzer )
+#        self.globalAnalyzerList.append( newAnalyzer )
 #        return newAnalyzer
 #
 

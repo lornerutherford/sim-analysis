@@ -133,14 +133,16 @@ def check_axis_limits(plot):
 
 
 
-def plotterPhaseSpace_makeFigure(plotter, fig, ax):
+def plotterPhaseSpace_makeFigure(plotter, fig, ax, gridData):
     from dumps.particles   import plot_particles
     from plotter.plotStyleUtils import  format_plotter_axes
+    from plotter.lines   import plot_lines
     
     for particles in plotter.particles:
         if particles.loaded:
             if particles.plot_data: plot_particles(ax, plotter, particles )
-            
+            plot_lines(ax, particles,gridData)
+          
     format_plotter_axes(ax, plotter)
     
     

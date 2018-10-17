@@ -37,7 +37,7 @@ class Line(object):
 
 
 
-def plot_lines(ax, obj, gridData):
+def plot_lines(ax, obj, gridData ):
     from dumps import Particles, Field
     import numpy as np
     
@@ -59,7 +59,9 @@ def plot_lines(ax, obj, gridData):
                     if not ID == line.quantity: continue
                     x,y, lineBounds = get_line_data_particles(line, obj, gridData)
                 if x is None: continue
+                
             
+
                 cellSizeX = 1.0
                 cellSizeY = 1.0
                 if gridData.has_key("cellSize"):
@@ -199,7 +201,16 @@ def get_line_data_particles(line, ptcl, gridData):
     if line.axis == "x":
         lineX = np.arange(xMin, xMax + line.bin_size , line.bin_size)
         lineY = pU.get_binned_quantity(line.axis, lineX, line.bin_size, line.quantity, ptcl)
-
+        
+    elif line.axis == "y":
+        lineY = np.arange(yMin, yMax + line.bin_size , line.bin_size)
+        lineX = pU.get_binned_quantity(line.axis, lineY, line.bin_size, line.quantity, ptcl)
+        
+    elif line.axis == "z":
+        lineY = np.arange(zMin, zMax + line.bin_size , line.bin_size)
+        lineX = pU.get_binned_quantity(line.axis, lineY, line.bin_size, line.quantity, ptcl)
+    
+    
     return lineX, lineY,lineBounds
 
 
