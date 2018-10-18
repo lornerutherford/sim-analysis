@@ -38,7 +38,6 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
         
         create_directory(analyzer.outPath)
         if isinstance(analyzer, ParticlesAnalyzer):
-            ptclAnalCounter += 1
             if is_first:
                 tmpAnalDataList[counter] = [[] for i in range(len(analyzer.particles))]
                 
@@ -65,7 +64,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
                 tmpAnalData = tmpAnalData if is_first and (not analyzer.use_existing_file or not existingAnalData) else mergeData(existingAnalData, tmpAnalData) 
 
                 tmpAnalDataList[counter][i] = tmpAnalData
-                
+                ptclAnalCounter += 1
                 if analyzer.save_txt:
                     save_analyzer_file(tmpAnalDataList[counter][i], analyzer, counter, ptcls.name)
 
