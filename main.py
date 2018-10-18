@@ -360,10 +360,14 @@ class picVIZ(object):
         localPtclObj = []
         for globalPtclObj in particles:
             localPtclObj.append( copy_object(globalPtclObj, Particles() ) )
+            localPtclObj[-1].index = self.ptclIndex
+            self.ptclIndex += 1
             
         localFldObj = []
         for globalFlObj in fields:
             localFldObj.append( copy_object(globalFlObj, Field() ) )
+            localFldObj[-1].index = self.fldIndex
+            self.fldIndex += 1
 
         newPlotter         = Plotter2D( particles = localPtclObj, fields = localFldObj, plane= plane,  plane_offset=plane_offset, fig_size=fig_size, x_lim=x_lim, y_lim=y_lim,\
                                        auto_aspect_ratio=auto_aspect_ratio, make_fig=make_fig, save_fig=save_fig, show_sim_progress = show_sim_progress, dpi = dpi)
@@ -425,6 +429,8 @@ class picVIZ(object):
         localPtclObj = []
         for globalPtclObj in particles:
             localPtclObj.append( copy_object(globalPtclObj, Particles() ) )
+            localPtclObj[-1].index = self.ptclIndex
+            self.ptclIndex += 1
             
         newPlotter         = PlotterPhaseSpace( particles=localPtclObj, direction=direction, fig_size=fig_size, x_lim=x_lim, y_lim=y_lim, show_sim_progress=show_sim_progress,make_fig=make_fig, save_fig=save_fig , dpi = dpi )
         newPlotter.outPath = self.outPath
@@ -473,8 +479,17 @@ class picVIZ(object):
         for plotter in plot_list:
             if isinstance(plotter, Plotter2D):
                 temp_plotList.append( copy_object(plotter, Plotter2D() ) )
+                for fld in plotter:
+                    fld.index = self.fldIndex
+                    self.fldIndex += 1
+
             elif isinstance(plotter, PlotterPhaseSpace):
                 temp_plotList.append( copy_object(plotter, PlotterPhaseSpace() ) )
+            for ptcl in plotter:
+                ptcl.index = self.ptclIndex
+                self.ptclIndex += 1
+
+                
         newPlotter         = MultiPlot( plotters =temp_plotList, fig_height=fig_height,  grid=grid, make_fig=make_fig, save_fig=save_fig , dpi = dpi )
         newPlotter.outPath = self.outPath
         self.globalPlotterList.append( newPlotter )

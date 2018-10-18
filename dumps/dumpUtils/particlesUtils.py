@@ -236,10 +236,13 @@ def get_mean(vector, weight):
     
         
 def get_rms(vector, weight):
-    N = np.sum(weight)            
-    if N == 0:
+    N = np.sum(weight)     
+    a = (1./N)*np.sum(weight*vector**2)
+    b = ((1./N)*np.sum(weight*vector))**2
+       
+    if N == 0 or a < b:
         return 0
-    return np.sqrt((1./N)*np.sum(weight*vector**2) - ((1./N)*np.sum(weight*vector))**2)
+    return np.sqrt( a - b )
 
 
 
@@ -355,7 +358,7 @@ def get_particles_vector_from_string(obj, inString):
         elif inString.lower() == "etrans" :
             return obj.Etrans
         else:
-            return None
+            return 0
         
 
 
