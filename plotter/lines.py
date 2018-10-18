@@ -70,7 +70,7 @@ def plot_lines(ax, obj, gridData ):
             
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
-                    axLine.plot(x-0.5*cellSizeX, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
+                    axLine.plot(x, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
                     
                     axLine.set_ylim(line.tick_min, line.tick_max)
                     

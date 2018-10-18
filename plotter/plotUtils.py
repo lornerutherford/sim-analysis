@@ -58,7 +58,6 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
         else:
            ticks, tickLabels, power = get_axis_ticks(data[0], data[1]) 
            set_axis_label(axis, key, power, plotter.labelSize, color = data[3], kind = "x")
-        
         if np.max(ticks) == np.min(ticks):
             tickLabels = ["", "0", ""]
             ticks = [-1, 0,1]
@@ -333,7 +332,7 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
         maxVal = 0
         if isinstance(obj, (Particles, Field)):
             if obj.loaded:
-                data = get_particles_vector_from_string(obj, currentKey) if isinstance(obj, Particles) else get_field_plane(obj, gridData)
+                data = get_particles_vector_from_string(obj, currentKey.split(",")[-1]) if isinstance(obj, Particles) else get_field_plane(obj, gridData)
             else:
                 data = [0,0]
         elif isinstance(obj, (FieldLine, ParticlesLine)):

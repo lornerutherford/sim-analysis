@@ -112,9 +112,10 @@ def get_quantity_from_string(ptclObj, quantity, binSize, line = 0):
         energySpreadUnitFactor = quantity.lower().split("b6")[1]
         energySpreadUnitFactor = 1e3 if energySpreadUnitFactor == "01" else 1e4 if energySpreadUnitFactor == "001" else 1e2 
         energyTerm =  get_mean(ptclObj.E, ptclObj.Weight) 
-        if energyTerm == 0:
+        energySpread = get_rms(ptclObj.E, ptclObj.Weight)
+        if energyTerm == 0 or energySpread == 0:
             return 0
-        return get_5D_brightness(ptclObj, line,binSize)/ (get_rms(ptclObj.E, ptclObj.Weight) /energyTerm * energySpreadUnitFactor )
+        return get_5D_brightness(ptclObj, line,binSize)/ (energySpread /energyTerm * energySpreadUnitFactor )
     
        
     elif quantity.lower().find("twissa") > -1:
@@ -185,7 +186,9 @@ def get_5D_brightness(ptclObj, line, binSize):
 
 
 def get_current_peak(xVec, weights, numPtclsInMacro, bin_size):
-    return np.max(get_current(xVec, weights, numPtclsInMacro, bin_size))
+    try:
+        return np.max(get_current(xVec, weights, numPtclsInMacro, bin_size))
+    except: return 0
 
 
 
@@ -315,6 +318,7 @@ def get_particles_vector_from_string(obj, inString):
     1D array containing requested quantity     
     
     """
+
     if isinstance(inString, basestring):
         if inString.lower() == "x":
             return obj.X
