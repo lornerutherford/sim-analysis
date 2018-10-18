@@ -51,10 +51,19 @@ def load_particles(print_progress, pathToData, dumpNumber, ptclList, loadedPtclO
             
             
             
-            if isinstance(newPtclObj, Particles): # loading successful
-                loadedPtclObjs.append(newPtclObj)
-                if print_progress:
-                    print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded"
+            if isinstance(newPtclObj, Particles):    # loading successful
+                
+                from dumps.dumpUtils.particlesUtils import make_particles_cuts
+                make_particles_cuts(newPtclObj)
+                if len(newPtclObj.X) == 0:
+                    newPtclObj.loaded = 0
+                    if print_progress:
+                        print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded, but empty due to cuts, ignored"
+                else: 
+                    newPtclObj.loaded = 1
+                    loadedPtclObjs.append(newPtclObj)
+                    if print_progress:
+                        print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded"
                 
             elif newPtclObj == 0:
                 print ("       (!) Warning: Cannot read particle file " + ptcl.name + "_" + str(dumpNumber) + ", ignored")
@@ -147,8 +156,8 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             if np.max(ptclObj.PX) > 0:
                 ptclObj.YP     = ptclObj.PY / ptclObj.PX * 1000
                 ptclObj.ZP     = ptclObj.PZ / ptclObj.PX * 1000
-                ptclObj.YP[np.isnan(ptclObj.YP)] = 0
-                ptclObj.ZP[np.isnan(ptclObj.ZP)] = 0
+                ptclObj.YP[np.isnan(ptclObj.YP)] = 0.
+                ptclObj.ZP[np.isnan(ptclObj.ZP)] = 0.
             else:
                 ptclObj.YP     = np.zeros(len(ptclObj.PY))
                 ptclObj.ZP     = np.zeros(len(ptclObj.PZ))
@@ -162,7 +171,6 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2 - 1))   
             ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2 - 1))   
             ptclObj.Etrans = np.sqrt(ptclObj.EY**2 + ptclObj.EZ**2)
-            ptclObj.loaded = 1
             return ptclObj, gridData
     
     return 1, gridData

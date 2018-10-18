@@ -41,7 +41,6 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, plotters,
     """
     from dataReader.particleReader      import load_particles
     from dataReader.fieldReader         import load_field
-    from dumps.dumpUtils.particlesUtils import make_particles_cuts
     import itertools
     
     currentGridData = {}
@@ -50,7 +49,6 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, plotters,
     for obj in itertools.chain(plotters, analyzers):
         try:
             particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, obj.particles, particleObjList, currentGridData)
-            for ptcl in particleObjList: make_particles_cuts(ptcl)
         except: pass
     
         try:

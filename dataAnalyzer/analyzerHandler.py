@@ -12,7 +12,6 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
     from utils.miscUtils import create_directory
     from dataAnalyzer import ParticlesAnalyzer, FieldAnalyzer
     from dumps.dumpUtils.particlesUtils import get_quantity_from_string, get_particles_vector_from_string
-    from utils.miscUtils import create_directory
     
     
     ptclAnalCounter    = 0
@@ -22,10 +21,15 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
     
 
     for analyzer in analyzerList:
+        loadCheck = check_anal_requests(analyzer)
+        if not loadCheck:
+            print ("       (!) Warning: Analyzer of type " + str(type(analyzer)) + " does not contain any loaded dumps, ignored")
+            
+        
         summaryOutName = analyzer.outPath + "analyzer_" + str(counter) + "_summary.txt" if analyzer.file_name is None else analyzer.outPath + "analyzer_" + analyzer.file_name + "_summary.txt"
         create_directory(analyzer.outPath)
-
-        if analyzer.print_data: 
+        
+        if analyzer.print_data and loadCheck: 
             print "\n       ----- Analyzer " + str(counter) + " data -----" 
             if is_first and analyzer.save_summary_txt:
                 with open(summaryOutName, "w") as f:
@@ -35,7 +39,6 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
         create_directory(analyzer.outPath)
         if isinstance(analyzer, ParticlesAnalyzer):
             ptclAnalCounter += 1
-#            attrList = analyzer.particles[0].__dict__.keys()
             if is_first:
                 tmpAnalDataList[counter] = [[] for i in range(len(analyzer.particles))]
                 
@@ -57,7 +60,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
                             f.write("\n" + get_quantity_val_string(quant, tmpAnalData[quant][0]))
                         
                     
-                    
+                  
                 existingAnalData = load_analyzer_file(analyzer, ptclAnalCounter, ptcls.name) if is_first and analyzer.use_existing_file else tmpAnalDataList[counter][i]                
                 tmpAnalData = tmpAnalData if is_first and (not analyzer.use_existing_file or not existingAnalData) else mergeData(existingAnalData, tmpAnalData) 
 
@@ -74,7 +77,20 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
                 
 
 
-
+def check_anal_requests(analyzer):
+    try:
+        for ptcl in analyzer.particles:
+            if ptcl.loaded: 
+                return 1
+    except: pass
+    try:
+        for fld in analyzer.fields:
+            if fld.loaded: 
+                return 1
+    except: pass
+    return 0
+    
+    
 
 def get_quantity_val_string(quant, val):
     import numpy as np

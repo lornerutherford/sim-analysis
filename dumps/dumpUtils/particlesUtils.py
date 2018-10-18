@@ -218,7 +218,9 @@ def get_emittance(ptclObj, direction, disp = 0):
     gammaBeta               = (1./n)*np.sum(ptclObj.Weight*ptclObj.PX)/const.c
     
     if disp == 0:
-        return gammaBeta * np.sqrt(ySquaredMean * pyOverPxSquaredMean - yPyOverPxMeanSquared) * 1e-6
+        if ySquaredMean * pyOverPxSquaredMean - yPyOverPxMeanSquared >=0:
+            return gammaBeta * np.sqrt(ySquaredMean * pyOverPxSquaredMean - yPyOverPxMeanSquared) * 1e-6
+        else: return 0
     else:
         meanY = np.mean(locVec)*1e-6
         delta = get_rms(momVec,ptclObj.Weight)/get_mean(momVec,ptclObj.Weight)
