@@ -79,7 +79,6 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
     
     for i in range(len(lineAxesX)):
         axisData = lineAxesX[i].items()[0]
-        
         start = axPos.x1 + (i*(plotter.colorbarSpacing)/figWidth  )
         end   = 0.001/figWidth    
         axis = fig.add_axes([ start ,    axPos.y0,   end ,     axPos.height])
@@ -208,10 +207,10 @@ def get_axis_list(plot, gridData):
         """ helper function"""
         line.tick_min = data[0]
         line.tick_max = data[1]
-        
         if not line.force_color:
             line.color    = data[3]
         line.invert_axis =  int(data[5])
+        
 
     outputList = {}
     if hasattr(plot, 'fields'):
@@ -225,6 +224,7 @@ def get_axis_list(plot, gridData):
                 for line in fld.lines:
                     if key.split(",")[1] == str(line.axis) and key.split(",")[2] == str(fld.plane) and key.split(",")[3] == str(fld.kind) and key.split(",")[4] == str(line.component) :
                         assign_vals(line, outputList[key])
+                        if line.force_color:  outputList[key][3] = line.color
 
     if hasattr(plot, 'particles'):
 
@@ -238,7 +238,7 @@ def get_axis_list(plot, gridData):
                 for line in ptcl.lines:
                     if key.split(",")[1] == line.axis  and key.split(",")[2] == ptcl.plane and key.split(",")[3] == line.quantity:
                         assign_vals(line, outputList[key])
-
+                        if line.force_color:  outputList[key][3] = line.color
 
     return outputList    
        
