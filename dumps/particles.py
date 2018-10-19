@@ -74,6 +74,9 @@ class Particles(Dump):
         self.transparencyClipMin      = None
         self.transparencyClipMax      = None
         self.transparencyReverse      = None
+        
+        self.trans_clip_min = None
+        self.trans_clip_max = None
 
 
     def color_code(self, quantity, colormap = "inferno", show_colorbar = True, clip_min = None, clip_max = None):
@@ -177,7 +180,7 @@ class Particles(Dump):
 
 
     def addLine(self, axis = "x", quantity = None, bin_size = 0.2, x_range = None, y_range = None, z_range = None, show_range = 0, \
-                operation = "mean", tick_min = None, tick_max = None, color = None, invert_axis = 0, show_axis = 1, z_order = 3):
+                operation = "mean", tick_min = None, tick_max = None, color = None, force_color= 0, invert_axis = 0, show_axis = 1, z_order = 3):
         """
         Interface for Line operations on Particles dumps. 
         User can define line or volume from which to extract data by using range-variables
@@ -234,6 +237,10 @@ class Particles(Dump):
             
         color: string or list with 3 or 4 entries
             Defines color of Line and corresponding axis
+        
+        force_color, bool
+            Assign the chosen color even if other lines with same quantity are plotted (normally, lines with identical properties are grouped and get same color)
+
             
         invert_axis: bool
             Inverts axis, i.e. flips plotting direction
@@ -260,7 +267,7 @@ class Particles(Dump):
             
         
         newLineObj = ParticlesLine(quantity = quantity, bin_size = bin_size, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
-                                   show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max, color = color, invert_axis = invert_axis,\
+                                   show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color, invert_axis = invert_axis,\
                                    show_axis = show_axis, z_order=z_order)
                 
         if self.lines is None:
@@ -276,10 +283,10 @@ class ParticlesLine(Line):
     """
     
     def __init__(self, quantity = None, bin_size = None, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, \
-                 tick_min = None, tick_max = None, color = None, invert_axis = None, show_axis = None, z_order = None):
+                 tick_min = None, tick_max = None, color = None, force_color = None, invert_axis = None, show_axis = None, z_order = None):
         
         Line.__init__(self, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, show_range = show_range, operation = operation, \
-                      tick_min = tick_min, tick_max = tick_max, color = color, invert_axis = invert_axis, show_axis = show_axis,z_order = z_order)
+                      tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color,invert_axis = invert_axis, show_axis = show_axis,z_order = z_order)
         
         self.quantity = quantity
         self.bin_size = bin_size

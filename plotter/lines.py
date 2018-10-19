@@ -11,7 +11,7 @@ class Line(object):
     """
     
     def __init__(self, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, tick_min = None, tick_max = None,\
-                 invert_axis = None, show_axis = None, color = None, z_order = None):
+                 invert_axis = None, show_axis = None, color = None, force_color = None, z_order = None):
         
         self.axis = axis
         
@@ -29,6 +29,7 @@ class Line(object):
         self.invert_axis = invert_axis
 
         self.color    = color
+        self.force_color = force_color 
         self.z_order  = z_order
         self.line_style = "-"
         self.line_width = 1
@@ -39,11 +40,11 @@ class Line(object):
 
 def plot_lines(ax, obj, gridData ):
     from dumps import Particles, Field
-    import numpy as np
     
     if obj.lines is not None: 
         
         lineIDs =  set( line.quantity for line in obj.lines) if isinstance(obj, Particles) else set( str(line.axis) + "," + obj.kind + "," + str(line.component) + "," + str(line.plane) for line in obj.lines)       #group all lines with similar settings
+        
         
         for ID in lineIDs:
             axLine  = None
@@ -60,8 +61,6 @@ def plot_lines(ax, obj, gridData ):
                     x,y, lineBounds = get_line_data_particles(line, obj, gridData)
                 if x is None: continue
                 
-            
-
                 cellSizeX = 1.0
                 cellSizeY = 1.0
                 if gridData.has_key("cellSize"):

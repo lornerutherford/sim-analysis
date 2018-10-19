@@ -208,7 +208,9 @@ def get_axis_list(plot, gridData):
         """ helper function"""
         line.tick_min = data[0]
         line.tick_max = data[1]
-        line.color    = data[3]
+        
+        if not line.force_color:
+            line.color    = data[3]
         line.invert_axis =  int(data[5])
 
     outputList = {}
@@ -352,7 +354,7 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
             maxVal = obj.clip_max if isinstance(obj, (Particles, Field)) else obj.tick_max
             userRequestSwitch[1] = 1
             
-        entry3 = obj.colormap if isinstance(obj, (Particles, Field)) else obj.color
+        entry3 = obj.colormap if isinstance(obj, (Particles, Field)) else obj.color if not obj.force_color else ""
         entry4 = int(obj.show_colorbar) if isinstance(obj, (Particles, Field)) else int(obj.show_axis)
         entry5 = 0 if isinstance(obj, (Particles, Field)) else int(obj.invert_axis)
         
@@ -399,8 +401,7 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
                 maxVal = max(outputList[currentKey][1], switchList[1])
                 userRequestSwitch[1] = 1
                 
-                
-            outputList[currentKey] = [minVal, maxVal, userRequestSwitch,  outputList[currentKey][3], showEntry, outputList[currentKey][5]]
+            outputList[currentKey] = [minVal, maxVal, userRequestSwitch, outputList[currentKey][3], showEntry, outputList[currentKey][5]]
                     
                 
     return outputList
