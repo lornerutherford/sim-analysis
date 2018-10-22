@@ -136,7 +136,6 @@ class picVIZ(object):
             analDataList    = analyze_data(tmpAnalyzerList, tmpGridData, dumpNumber, dumpNumber == self.dumpNumbers[0], analDataList)
 
 
-
             #make figures
             tmpPlotterList = mainUtils.setup_plotter_copies(globalPlotterList, tmpPtclObjs, tmpFldObjs) #TODO: add analyzer plotter 
             make_plots(tmpPlotterList, tmpGridData, dumpNumber)    #TODO: add analyzer plotter 
@@ -194,7 +193,6 @@ class picVIZ(object):
             color= [random.random(), random.random(), random.random()]
 
         
-#        newParticlesObj = Particles(species_name, len(globalPtclList), plane = plane, z_order = z_order, \
         newParticlesObj = Particles(species_name, self.ptclIndex, plane = plane, z_order = z_order, \
                                     show_ratio = show_ratio, opacity = opacity, marker_size = marker_size, color = color, \
                                     plot_data = plot_data, file_kind = file_kind)
@@ -283,7 +281,6 @@ class picVIZ(object):
             clip_max = max(dummy)
 
 
-#        newFieldObj = Field(species_name, index = len(globalFldList), kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
         newFieldObj = Field(species_name, index = self.fldIndex, kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
                             project = project, opacity = opacity, colormap = colormap, clip_min = clip_min, clip_max = clip_max,  show_colorbar = show_colorbar,\
                             plot_data =plot_data,  z_order = z_order, file_kind = "vsim")
@@ -476,16 +473,17 @@ class picVIZ(object):
         if not grid:
             grid = [len(plot_list)]
         temp_plotList = []
+        
         for plotter in plot_list:
             if isinstance(plotter, Plotter2D):
                 temp_plotList.append( copy_object(plotter, Plotter2D() ) )
-                for fld in plotter:
+                for fld in plotter.fields:
                     fld.index = self.fldIndex
                     self.fldIndex += 1
 
             elif isinstance(plotter, PlotterPhaseSpace):
                 temp_plotList.append( copy_object(plotter, PlotterPhaseSpace() ) )
-            for ptcl in plotter:
+            for ptcl in plotter.particles:
                 ptcl.index = self.ptclIndex
                 self.ptclIndex += 1
 

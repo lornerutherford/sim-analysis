@@ -16,12 +16,12 @@ import glob
 def set_load_switches(plotters, analyzers):
     import itertools
     
-    for obj in itertools.chain(plotters, analyzers):
+    def iterate(obj):
         try:
             for ptclObj in obj.particles:
-                if ptclObj.plot_data or ptclObj.lines: 
-                    ptclObj.load = 1
-                    continue
+                    if ptclObj.plot_data or ptclObj.lines: 
+                        ptclObj.load = 1
+                        continue
         except: pass                    
         try:
             for fldObj in obj.fields:
@@ -29,6 +29,13 @@ def set_load_switches(plotters, analyzers):
                     fldObj.load = 1
                     continue
         except: pass                    
+
+    for obj in itertools.chain(plotters, analyzers):
+        try:
+            for plotter in obj.plotters:
+                iterate(plotter)
+        except:
+            iterate(obj)
     return plotters, analyzers
 
 
@@ -46,15 +53,30 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, plotters,
     currentGridData = {}
     particleObjList = []
     fieldObjList    = []
+    
+    
     for obj in itertools.chain(plotters, analyzers):
         try:
-            particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, obj.particles, particleObjList, currentGridData)
-        except: pass
-    
-        try:
-            fieldObjList,   currentGridData  = load_field(print_progress, pathToData, dumpNumber, obj.fields, fieldObjList,currentGridData)
-        except: pass
+            for plotter in obj.plotters:
+                try:
+                    particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, plotter.particles, particleObjList, currentGridData)
+                except: pass
+        
+                try:
+                    fieldObjList,   currentGridData  = load_field(print_progress, pathToData, dumpNumber, plotter.fields, fieldObjList,currentGridData)
+                except: pass
+        except:
+                try:
+                    particleObjList, currentGridData = load_particles(print_progress, pathToData, dumpNumber, obj.particles, particleObjList, currentGridData)
+                except: pass
+        
+                try:
+                    fieldObjList,   currentGridData  = load_field(print_progress, pathToData, dumpNumber, obj.fields, fieldObjList,currentGridData)
+                except: pass
+            
 
+
+            
     
     
     if print_gridData and currentGridData:

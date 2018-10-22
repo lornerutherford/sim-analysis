@@ -81,7 +81,7 @@ def make_plots(plotList, gridData, dumpNumber):
                     if isinstance(plotter.plotters[i], Plotter2D):
                         plotter2D_makeFigure(plotter.plotters[i], fig, axList[i], gridData)
                     elif isinstance(plotter.plotters[i], PlotterPhaseSpace):
-                        plotterPhaseSpace_makeFigure(plotter.plotters[i], fig,  axList[i])
+                        plotterPhaseSpace_makeFigure(plotter.plotters[i], fig,  axList[i], gridData)
 
 
                 multiCounter  += 1
@@ -199,23 +199,23 @@ def check_plot_requests(plot):
     """
     if isinstance(plot, MultiPlot):
         for plotter in plot.plotters:
-            for i in range(len(plotter.particles)):
-                if plotter.particles[i].loaded:
+            for ptcl in plotter.particles:
+                if ptcl.loaded:
                     return True
             if isinstance(plotter, Plotter2D):
-                for j in range(len(plotter.fields)):
-                    if plotter.fields[j].loaded:
+                for fld in plotter.fields:
+                    if fld.loaded:
                         return True
 
 
     else:
-        for i in range(len(plot.particles)):
-            if plot.particles[i].loaded:
+        for ptcl in plot.particles:
+            if ptcl.loaded:
                 return True
             
         if isinstance(plot, Plotter2D):
-            for j in range(len(plot.fields)):
-                if plot.fields[j].loaded:
+            for fld in plot.fields:
+                if fld.loaded:
                     return True
                             
     

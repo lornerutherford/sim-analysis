@@ -312,14 +312,19 @@ def plot_particles(ax, plotter, particles ):
         
     else:
         from matplotlib.colors import Normalize
+        import matplotlib 
         
         colorVec = [list(colors.to_rgba(particles.color))]*len(xAxis)   # start with the normal color 
         if particles.colorCodeQuantity is not None: 
             quantity = get_particles_vector_from_string(particles, particles.colorCodeQuantity)
             minVal = np.min( quantity ) if particles.clip_min is None else particles.clip_min
             maxVal = np.max( quantity ) if particles.clip_max is None else particles.clip_max
-            norm = Normalize(minVal, maxVal,  clip=True)(quantity)    
-            colorVec =  list(particles.colormap(norm))
+            if minVal < maxVal:
+                norm = Normalize(minVal, maxVal,  clip=True)(quantity)    
+                colorVec =  list(particles.colormap(norm))
+            else:
+                cmap = matplotlib.cm.get_cmap(particles.colormap)
+                colorVec = cmap(0.0)*np.ones(len(quantity))
      
         if particles.transparancyCodeQuantity is not None: 
             transquant = get_particles_vector_from_string(particles, particles.transparancyCodeQuantity)
@@ -328,10 +333,11 @@ def plot_particles(ax, plotter, particles ):
 
                 minVal = np.min( transquant ) if particles.trans_clip_min is None else particles.trans_clip_min
                 maxVal = np.max( transquant ) if particles.trans_clip_max is None else particles.trans_clip_max
-                
-                mapping = 1./(maxVal - minVal)*transquant - minVal/(maxVal - minVal)
-
-                mapping = mapping if not particles.transparencyReverse else 1.0 - mapping
+                if minVal < maxVal:
+                    mapping = 1./(maxVal - minVal)*transquant - minVal/(maxVal - minVal)
+                    mapping = mapping if not particles.transparencyReverse else 1.0 - mapping
+                else:
+                    mapping = np.ones(len(transquant))
                 
                 colorVec = np.asarray(colorVec)
                 colorVec[:,3] =  mapping
