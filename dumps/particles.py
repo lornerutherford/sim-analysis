@@ -324,8 +324,9 @@ def plot_particles(ax, plotter, particles ):
                 colorVec =  list(particles.colormap(norm))
             else:
                 cmap = matplotlib.cm.get_cmap(particles.colormap)
-                colorVec = cmap(0.0)*np.ones(len(quantity))
-     
+                colorVec = [cmap(0.0)] * len(quantity)
+
+                
         if particles.transparancyCodeQuantity is not None: 
             transquant = get_particles_vector_from_string(particles, particles.transparancyCodeQuantity)
 
