@@ -28,12 +28,12 @@ def format_plotter_axes(ax, plotter):
                 ax.set_xticklabels( np.round(np.linspace(plotter.x_lim[0], plotter.x_lim[1], 6 ), 1) ) 
             else:
                 ax.set_xticklabels( xtickLabels )
-            
+        if plotter.y_lim:
             yticks, ytickLabels, ypower = get_axis_ticks(plotter.y_lim[0], plotter.y_lim[1])            
             ax.set_ylim(plotter.y_lim)
             ax.set_yticks(np.linspace(plotter.y_lim[0], plotter.y_lim[1], 6))
             ax.set_yticklabels( ytickLabels )
-        else: 
+        if not plotter.x_lim and not plotter.y_lim: 
             ax.set_xlim(-1,1 )
             ax.set_ylim(-1,1 )
             ax.set_xticks([])

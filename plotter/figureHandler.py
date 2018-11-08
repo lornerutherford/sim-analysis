@@ -128,7 +128,7 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
     
     if isinstance(plotter, MultiPlot):
         
-        figWidth        = plotter.fig_height #TODO: must determine width of widest column here!!!!
+        figWidth        = plotter.fig_height
         plotter.fig_size = [ figWidth , plotter.fig_height] 
         
         fig = plt.figure(figsize = plotter.fig_size) 
@@ -173,7 +173,12 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
                 xStart = plotter.axisBounds[-1][2]
                 
             axList.append( fig.add_axes([ xStart ,    yStart,   xWidth ,     yHeight]) )
-            xEnd = axList[-1].get_position().x1 +  (plotter.axisSpacingX + plot.colorbarWidth*(len(colBarList[j]) + len(lineAxisList[j])) + plot.colorbarSpacing * np.max( len(colBarList[j]) + len(lineAxisList[j]) , 0))/figWidth
+            
+            from plotter.lines import split_axis_directions
+            lineAxesX, lineAxesY = split_axis_directions(lineAxisList[j])
+
+            
+            xEnd = axList[-1].get_position().x1 +  (plotter.axisSpacingX + plot.colorbarWidth*(len(colBarList[j]) + len(lineAxesX)) + plot.colorbarSpacing * np.max( len(colBarList[j]) + len(lineAxesX) , 0))/figWidth
             plotter.axisBounds.append( [axList[-1].get_position().x0, axList[-1].get_position().y0,   xEnd,  axList[-1].get_position().y1 ]  )
             
             draw_line_axes(fig, axList[-1], plot, lineAxisList[j], gridData)

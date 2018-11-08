@@ -146,6 +146,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
             inStream.close()
             
             fldObj.loaded = 1
+            
             return fldObj, gridData
         
     return 1, gridData
