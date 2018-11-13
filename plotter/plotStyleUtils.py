@@ -44,7 +44,8 @@ def format_plotter_axes(ax, plotter):
         ax.set_ylim(plotter.y_lim)
         ax.set_xticks(np.linspace(plotter.x_lim[0], plotter.x_lim[1], 6))
         ax.set_yticks(np.linspace(plotter.y_lim[0], plotter.y_lim[1], 6))
-       
+        
+        
     labelX, labelY = get_figure_labels(plotter, xpower, ypower)
     
     ax.set_xlabel(labelX, fontsize = plotter.labelSize)
@@ -356,10 +357,10 @@ def get_axis_ticks(minVal, maxVal):
             else:
                 power = str(maxAbs).find(".") - 1
                 
-            minVal = minVal/10**power
-            maxVal = maxVal/10**power
-            minVal = np.round(minVal, 1)
-            maxVal = np.round(maxVal, 1)
+            minVal = minVal/10.**power
+            maxVal = maxVal/10.**power
+            minVal = np.round(minVal, 2)
+            maxVal = np.round(maxVal, 2)
             
         elif maxAbs < 0.01:
             if str(maxAbs).find("e-") > -1:
@@ -371,10 +372,10 @@ def get_axis_ticks(minVal, maxVal):
                         power = -1*(i + 1)
                         break
                 
-            minVal = minVal/10**power
-            maxVal = maxVal/10**power
-            minVal = np.round(minVal, 1)
-            maxVal = np.round(maxVal, 1)
+            minVal = minVal/10.**power
+            maxVal = maxVal/10.**power
+            minVal = np.round(minVal, 2)
+            maxVal = np.round(maxVal, 2)
             
             # TODO: if min/max values differences are too small, only one tick remains (e.g due to rounding).. implement strategy to prevent that                
         
