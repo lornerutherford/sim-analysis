@@ -58,6 +58,7 @@ class Particles(Dump):
         self.EY     = None  
         self.EZ     = None
         self.Etrans = None
+        self.xLab = None
         
         self.show_ratio  = show_ratio
         self.opacity    = opacity
@@ -69,7 +70,6 @@ class Particles(Dump):
         
         self.colorCode         = None
         self.colorCodeQuantity = None
-        
         self.transparancyCodeQuantity = None
         self.transparencyClipMin      = None
         self.transparencyClipMax      = None
