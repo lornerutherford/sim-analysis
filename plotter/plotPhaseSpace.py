@@ -141,7 +141,7 @@ def plotterPhaseSpace_makeFigure(plotter, fig, ax, gridData):
     for particles in plotter.particles:
         if particles.loaded:
             if particles.plot_data: plot_particles(ax, plotter, particles )
-            plot_lines(ax, particles,gridData)
+            plot_lines(ax, particles,gridData, plotter)
           
     format_plotter_axes(ax, plotter)
     

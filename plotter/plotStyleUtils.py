@@ -40,11 +40,22 @@ def format_plotter_axes(ax, plotter):
             ax.set_yticks([])
             
     else:
-        ax.set_xlim(plotter.x_lim)
-        ax.set_ylim(plotter.y_lim)
-        ax.set_xticks(np.linspace(plotter.x_lim[0], plotter.x_lim[1], 6))
-        ax.set_yticks(np.linspace(plotter.y_lim[0], plotter.y_lim[1], 6))
+        if not plotter.x_lim: 
+            ax.set_xlim(-1,1 )
+            ax.set_xticks([])
+           
+        else:
+            ax.set_xlim(plotter.x_lim)
+            ax.set_xticks(np.linspace(plotter.x_lim[0], plotter.x_lim[1], 6))
+        if not plotter.y_lim: 
+            ax.set_ylim(-1,1 )
+            ax.set_yticks([])
+           
+        else:
+            ax.set_ylim(plotter.y_lim)
+            ax.set_yticks(np.linspace(plotter.y_lim[0], plotter.y_lim[1], 6))
         
+
         
     labelX, labelY = get_figure_labels(plotter, xpower, ypower)
     
@@ -265,8 +276,18 @@ def get_unit_from_component(key):
 
 
 def get_figure_labels(plotter, powerX, powerY):
-    from plotter import Plotter2D, PlotterPhaseSpace
+    from plotter import Plotter2D, PlotterPhaseSpace, PlotterHist
     
+    
+    if isinstance(plotter, PlotterHist):
+        xQuant = plotter.quantx
+        xUnit = get_unit_from_component("ptcl,0,xz,"+plotter.quantx+",-1")
+        yQuant = "Q"
+        yUnit  = "pC"
+        xLabel = "$" + xQuant + "\ \mathrm{("+xUnit+")}$" if powerX == 1 else "$" + xQuant + "\ \mathrm{(\\times10 ^ {" +str(powerX) + "}\ " + xUnit + ")}$"
+        yLabel = "$" + yQuant + "\ \mathrm{("+yUnit+")}$" if powerY == 1 else "$" + yQuant + "\ \mathrm{(\\times10 ^ {" +str(powerY) + "}\ " + yUnit + ")}$"
+        return xLabel, yLabel
+        
 
     if isinstance(plotter, PlotterPhaseSpace):
 

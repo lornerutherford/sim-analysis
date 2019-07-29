@@ -174,13 +174,13 @@ def plotter2D_makeFigure(plotter, fig, ax, gridData):
     for field in plotter.fields:   
         if field.loaded:
             if field.plot_data: plot_field(ax, plotter, field, gridData)
-            plot_lines(ax, field, gridData)
+            plot_lines(ax, field, gridData, plotter)
             
             
     for particles in plotter.particles:
         if particles.loaded:
             if particles.plot_data: plot_particles(ax, plotter, particles )
-            plot_lines(ax, particles, gridData)
+            plot_lines(ax, particles, gridData, plotter)
     
     format_plotter_axes(ax, plotter)        
     if plotter.show_sim_progress is not 0:

@@ -7,9 +7,12 @@ Created on Wed Jan 17 12:05:16 2018
 
 import matplotlib.pyplot as plt
 import numpy as np
-from plotter import Plotter2D, PlotterPhaseSpace, MultiPlot
+from plotter import Plotter2D, PlotterPhaseSpace, MultiPlot, PlotterHist
 from plotter.plot2D import check_Plotter2D_axis_limits, plotter2D_makeFigure
 from plotter.plotPhaseSpace import check_plotterPhaseSpace_axis_limits, plotterPhaseSpace_makeFigure
+from plotter.plothist import plotterhist_makeFigure, check_plotterhist_axis_limits
+
+
 from plotter.plotUtils import draw_colorbars, draw_line_axes, get_colorbar_list, get_axis_list
 from utils.miscUtils import create_directory
 
@@ -38,10 +41,11 @@ def make_plots(plotList, gridData, dumpNumber):
     multiCounter      = 0
     plot2DCounter     = 0
     phaseSpaceCounter = 0
-    
+    plotXYCounter     = 0
     for plotter in plotList:
         startTime = time.time()
-        
+        plotter.dumpNumber = dumpNumber
+
         colBarList   = []
         lineAxisList = []
         if plotter.make_fig:
@@ -53,8 +57,9 @@ def make_plots(plotList, gridData, dumpNumber):
             
             check_Plotter2D_axis_limits(plotter, gridData)
             check_plotterPhaseSpace_axis_limits(plotter)
-            
-            if isinstance(plotter, (Plotter2D, PlotterPhaseSpace)):
+            check_plotterhist_axis_limits(plotter)
+            if isinstance(plotter, (Plotter2D, PlotterPhaseSpace, PlotterHist)):
+                
                 colBarList.append( get_colorbar_list(plotter, gridData) )
                 lineAxisList.append( get_axis_list(plotter, gridData))
                 fig, axList = make_figure_and_axes(plotter, gridData, colBarList  = colBarList, lineAxisList = lineAxisList)
@@ -62,7 +67,14 @@ def make_plots(plotList, gridData, dumpNumber):
                 if isinstance(plotter, PlotterPhaseSpace):
                     phaseSpaceCounter += 1
                     plotterPhaseSpace_makeFigure(plotter, fig,  axList[-1], gridData)
-                else:
+                    
+                    
+                if isinstance(plotter, PlotterHist):
+                    plotXYCounter += 1
+                    plotterhist_makeFigure(plotter, fig,  axList[-1], gridData)
+                    
+                    
+                elif isinstance(plotter, Plotter2D):
                     plot2DCounter += 1
                     plotter2D_makeFigure(plotter, fig, axList[-1], gridData)
 
@@ -70,8 +82,13 @@ def make_plots(plotList, gridData, dumpNumber):
                 
             elif isinstance(plotter, MultiPlot):
                 for i in range(len(plotter.plotters)):
-                    colBarList.append( get_colorbar_list(plotter.plotters[i], gridData) )
-                    lineAxisList.append( get_axis_list(plotter.plotters[i], gridData))
+                    plotter.plotters[i].dumpNumber = dumpNumber
+                    if not isinstance(plotter.plotters[i], PlotterHist):
+                        colBarList.append( get_colorbar_list(plotter.plotters[i], gridData) )
+                        lineAxisList.append( get_axis_list(plotter.plotters[i], gridData))
+                    else: 
+                        colBarList.append({})
+                        lineAxisList.append({})
 
                 fig, axList = make_figure_and_axes(plotter, gridData, colBarList  = colBarList,  lineAxisList = lineAxisList)
                
@@ -82,6 +99,8 @@ def make_plots(plotList, gridData, dumpNumber):
                         plotter2D_makeFigure(plotter.plotters[i], fig, axList[i], gridData)
                     elif isinstance(plotter.plotters[i], PlotterPhaseSpace):
                         plotterPhaseSpace_makeFigure(plotter.plotters[i], fig,  axList[i], gridData)
+                    elif isinstance(plotter.plotters[i], PlotterHist):
+                        plotterhist_makeFigure(plotter.plotters[i], fig,  axList[i], gridData)
 
 
                 multiCounter  += 1
@@ -91,6 +110,8 @@ def make_plots(plotList, gridData, dumpNumber):
             if plotter.save_fig:
                 if isinstance(plotter, PlotterPhaseSpace):
                     plt.savefig(plotter.outPath + "PhaseSpace_" + str(phaseSpaceCounter) +"_direction_" + plotter.direction + "_" + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
+                if isinstance(plotter, PlotterHist):
+                    plt.savefig(plotter.outPath + "XY_" + str(plotXYCounter) + "_" + plotter.quantx + "_"  + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, Plotter2D):
                     plt.savefig(plotter.outPath + "Plot2D_" + str(plot2DCounter) + "_" + str(dumpNumber)+ ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, MultiPlot):
@@ -111,8 +132,11 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
         fig = plt.figure(figsize = plotter.fig_size)   
         axList.append( fig.add_axes([ 0 ,    0,   1 ,  1]) )
         draw_line_axes(fig, axList[-1], plotter, lineAxisList[0], gridData)
-        draw_colorbars(fig, axList[-1], plotter, colBarList[0],  lineAxisList[0], )        
+        draw_colorbars(fig, axList[-1], plotter, colBarList[0],  lineAxisList[0], )    
         
+    if isinstance(plotter, PlotterHist):
+        fig = plt.figure(figsize = plotter.fig_size)   
+        axList.append( fig.add_axes([ 0 ,    0,   1 ,  1]) )
         
     if isinstance(plotter, Plotter2D):
         yRatio = 1

@@ -10,7 +10,7 @@ class Dump(object):
     class defines the common structure of all dump objects (they inherit those properties)
     
     """   
-    def __init__(self, name = None, index = None, plane = None, colormap = None, z_order = None, file_kind = None, plot_data = None):
+    def __init__(self, name = None, index = None, plane = None, colormap = None, z_order = None, file_kind = None, plot_data = None,export = None):
         self.name          = name
         self.file_kind     = file_kind
         self.index         = index
@@ -28,6 +28,8 @@ class Dump(object):
         self.clip_min       = None
         self.clip_max       = None
 
+        self.export         = export
+        
         self.lines = []
 
         import colormaps as customColMaps

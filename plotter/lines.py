@@ -11,7 +11,7 @@ class Line(object):
     """
     
     def __init__(self, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, tick_min = None, tick_max = None,\
-                 invert_axis = None, show_axis = None, color = None, force_color = None, z_order = None):
+                 invert_axis = None, show_axis = None, color = None, force_color = None, z_order = None, export = None, plot_data = None):
         
         self.axis = axis
         
@@ -34,12 +34,14 @@ class Line(object):
         self.line_style = "-"
         self.line_width = 1
 
+        self.export = export
+        self.plot_data = plot_data
 
 
-
-
-def plot_lines(ax, obj, gridData ):
+def plot_lines(ax, obj, gridData, plotter ):
     from dumps import Particles, Field
+    from utils.miscUtils import export
+    import numpy as np
     
     if obj.lines is not None: 
         
@@ -51,6 +53,8 @@ def plot_lines(ax, obj, gridData ):
             counter = 0
             for line in obj.lines:
                 x = y =  lineBounds = 0
+                if not line.plot_data: continue
+                
                 if isinstance(obj, Field): 
                     if not ID == str(line.axis) + "," + obj.kind + "," + str(line.component) + "," + str(line.plane): continue
                     x,y, lineBounds = get_line_data_field(line, obj, gridData)
@@ -70,6 +74,9 @@ def plot_lines(ax, obj, gridData ):
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
                     axLine.plot(x - 0.5*cellSizeX, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
+                    
+                    if line.export:
+                        export(np.column_stack( (x - 0.5*cellSizeX,y) ), line, plotter)
                     
                     axLine.set_ylim(line.tick_min, line.tick_max)
                     
@@ -96,6 +103,8 @@ def plot_lines(ax, obj, gridData ):
                         return (c-d)/(a-b)*x + (c-a*d/b)/(1-a/b)
 
                     axLine.plot(x, trafo(y)-0.5*cellSizeY, color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width )
+                    if line.export:
+                        export(np.column_stack(( x,trafo(y)-0.5*cellSizeY )), line, plotter)
                     
                     axLine.set_xlim(line.tick_min, line.tick_max)
                                         

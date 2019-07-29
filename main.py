@@ -118,6 +118,7 @@ class picVIZ(object):
         
         globalPlotterList, globalAnalyzerList = set_load_switches(self.globalPlotterList, self.globalAnalyzerList)
         
+        
         get_meta_data(print_metaData, self.pathToData, globalPlotterList, globalAnalyzerList)
         analDataList = [[] for i in range(len(globalAnalyzerList))]
         
@@ -129,7 +130,6 @@ class picVIZ(object):
 
             tmpPtclObjs, tmpFldObjs, tmpGridData = load_data(print_progress, print_gridData, self.pathToData,  dumpNumber, globalPlotterList, globalAnalyzerList )
 
-            
             
             #analyze loaded data
             tmpAnalyzerList = mainUtils.set_analyzer_copies(globalAnalyzerList, tmpPtclObjs, tmpFldObjs)
@@ -147,7 +147,8 @@ class picVIZ(object):
 
 
 
-    def add_particles(self, species_name, plane = "xy", show_ratio = 1., opacity = 1., marker_size = 2, color = None, plot_data = 1,  z_order = 2, file_kind = "vsim"):
+    def add_particles(self, species_name, plane = "xy", show_ratio = 1., opacity = 1., marker_size = 2, \
+                      color = None, plot_data = 1,  z_order = 2, file_kind = "vsim", export = 0 ):
         """
         Generates new Particles object
         
@@ -181,6 +182,9 @@ class picVIZ(object):
         file_kind: string
             Defines which file structure is used for the loading routine. Currently, only "vsim" is implemented
             
+        export: bool
+            Dump plotted data to txt file
+    
         Returns
         -------
         Particles object that allows to set up and manipulate        
@@ -195,7 +199,7 @@ class picVIZ(object):
         
         newParticlesObj = Particles(species_name, self.ptclIndex, plane = plane, z_order = z_order, \
                                     show_ratio = show_ratio, opacity = opacity, marker_size = marker_size, color = color, \
-                                    plot_data = plot_data, file_kind = file_kind)
+                                    plot_data = plot_data, file_kind = file_kind, export=export)
         self.ptclIndex += 1
         
         
@@ -206,7 +210,8 @@ class picVIZ(object):
     
     
     def add_field(self, species_name, kind = None, component = -1, plane = "xy",  plane_offset = 0, project = 0, \
-                  opacity = 1., colormap = "Reds",  clip_min = None, clip_max = None, plot_data = 1, show_colorbar = 1, z_order = 1, file_kind = "vsim"):
+                  opacity = 1., colormap = "Reds",  clip_min = None, clip_max = None, plot_data = 1, show_colorbar = 1,\
+                  z_order = 1, file_kind = "vsim",export = 0):
         
         """
         Generates new Field object
@@ -263,6 +268,9 @@ class picVIZ(object):
         file_kind: string
             Defines which file structure is used for the loading routine. Currently, only "vsim" is implemented
 
+        export: bool
+            Dump plotted data to txt file
+    
         Returns
         -------
         Field object that allows to set up and manipulate        
@@ -283,7 +291,7 @@ class picVIZ(object):
 
         newFieldObj = Field(species_name, index = self.fldIndex, kind = kind, component = component, plane=plane,  plane_offset=plane_offset,\
                             project = project, opacity = opacity, colormap = colormap, clip_min = clip_min, clip_max = clip_max,  show_colorbar = show_colorbar,\
-                            plot_data =plot_data,  z_order = z_order, file_kind = "vsim")
+                            plot_data =plot_data,  z_order = z_order, file_kind = "vsim", export=export)
         self.fldIndex += 1
         return newFieldObj
         
@@ -438,6 +446,27 @@ class picVIZ(object):
         return newPlotter
     
     
+    
+    
+    def add_hist_plot(self, particles = [], quantx ="e", bin_size = 0.2, log_x = 0, log_y = 0, fig_size = [5,5], x_lim = [], y_lim = [],  show_sim_progress = 0, make_fig = 1, save_fig = 1, dpi = 300):
+        
+        from plotter import PlotterHist
+        from dumps   import Particles
+        from utils.miscUtils import copy_object
+        
+        localPtclObj = []
+        for globalPtclObj in particles:
+            localPtclObj.append( copy_object(globalPtclObj, Particles() ) )
+            localPtclObj[-1].index = self.ptclIndex
+            self.ptclIndex += 1
+            
+        newPlotter         = PlotterHist( particles=localPtclObj, quantx=quantx, bin_size = bin_size, log_x=log_x, log_y = log_y,  fig_size=fig_size, x_lim=x_lim, y_lim=y_lim, show_sim_progress=show_sim_progress,make_fig=make_fig, save_fig=save_fig , dpi = dpi )
+        newPlotter.outPath = self.outPath
+        set_plotter_defaults(newPlotter)
+        
+        self.globalPlotterList.append( newPlotter )
+        return newPlotter
+
 
     def add_multi_plot(self, plot_list = [], grid = [], fig_height = 6, make_fig = 1, save_fig = 1, dpi = 500):
         """
@@ -467,7 +496,7 @@ class picVIZ(object):
             
         """
 
-        from plotter  import Plotter2D, PlotterPhaseSpace, MultiPlot
+        from plotter  import Plotter2D, PlotterPhaseSpace, MultiPlot, PlotterHist
         from utils.miscUtils import copy_object
 
         if not grid:
@@ -483,6 +512,9 @@ class picVIZ(object):
 
             elif isinstance(plotter, PlotterPhaseSpace):
                 temp_plotList.append( copy_object(plotter, PlotterPhaseSpace() ) )
+                
+            elif isinstance(plotter, PlotterHist):
+                temp_plotList.append( copy_object(plotter, PlotterHist() ) )
             for ptcl in plotter.particles:
                 ptcl.index = self.ptclIndex
                 self.ptclIndex += 1

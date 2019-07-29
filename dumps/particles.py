@@ -35,10 +35,11 @@ class Particles(Dump):
     """   
     
     
-    def __init__(self, name = None, index= None,  plane = None, show_ratio = None, opacity =None, z_order = None, marker_size = None, color = None, file_kind = None, plot_data = None):
+    def __init__(self, name = None, index= None,  plane = None, show_ratio = None, opacity =None, z_order = None, marker_size = None,\
+                 color = None, file_kind = None, plot_data = None, export = None):
         
         
-        Dump.__init__(self, name = name, index = index, plane =plane, z_order=z_order, file_kind = file_kind, plot_data = plot_data)
+        Dump.__init__(self, name = name, index = index, plane =plane, z_order=z_order, file_kind = file_kind, plot_data = plot_data, export = export)
         
 
         self.numPtclsInMacro = None
@@ -180,7 +181,8 @@ class Particles(Dump):
 
 
     def addLine(self, axis = "x", quantity = None, bin_size = 0.2, x_range = None, y_range = None, z_range = None, show_range = 0, \
-                operation = "mean", tick_min = None, tick_max = None, color = None, force_color= 0, invert_axis = 0, show_axis = 1, z_order = 3):
+                operation = "mean", tick_min = None, tick_max = None, color = None, force_color= 0, invert_axis = 0,\
+                show_axis = 1, z_order = 3, export = 0, plot_data = 0):
         """
         Interface for Line operations on Particles dumps. 
         User can define line or volume from which to extract data by using range-variables
@@ -250,6 +252,13 @@ class Particles(Dump):
             
         z_order: int > 0
             Defines position of field within plot. Higher values correspond to front layers
+        
+        export: bool
+            Dump plotted data to txt file
+            
+        plot_data: bool
+            Plot data or not
+            
             
         Returns
         -------
@@ -268,7 +277,7 @@ class Particles(Dump):
         
         newLineObj = ParticlesLine(quantity = quantity, bin_size = bin_size, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
                                    show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color, invert_axis = invert_axis,\
-                                   show_axis = show_axis, z_order=z_order)
+                                   show_axis = show_axis, z_order=z_order, export=export, plot_data = plot_data)
                 
         if self.lines is None:
             self.lines = []
@@ -283,10 +292,12 @@ class ParticlesLine(Line):
     """
     
     def __init__(self, quantity = None, bin_size = None, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, \
-                 tick_min = None, tick_max = None, color = None, force_color = None, invert_axis = None, show_axis = None, z_order = None):
+                 tick_min = None, tick_max = None, color = None, force_color = None, invert_axis = None, show_axis = None, z_order = None, export = None, \
+                 plot_data = None):
         
         Line.__init__(self, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, show_range = show_range, operation = operation, \
-                      tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color,invert_axis = invert_axis, show_axis = show_axis,z_order = z_order)
+                      tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color,invert_axis = invert_axis, \
+                      show_axis = show_axis,z_order = z_order, export = export, plot_data = plot_data)
         
         self.quantity = quantity
         self.bin_size = bin_size
@@ -298,6 +309,9 @@ def plot_particles(ax, plotter, particles ):
     from plotter import Plotter2D, PlotterPhaseSpace
     import matplotlib.colors as colors
     from dumps.dumpUtils.particlesUtils import get_particles_vector_from_string, get_phaseSpace_vectors, get_particles_plane
+    from utils.miscUtils import export
+    
+    
     
     if isinstance(plotter, PlotterPhaseSpace):
         xAxis, yAxis = get_phaseSpace_vectors(particles, plotter.direction)
@@ -309,7 +323,10 @@ def plot_particles(ax, plotter, particles ):
     if particles.colorCode is None:
         ax.scatter(xAxis[0::delStep], yAxis[0::delStep], alpha = particles.opacity, zOrder = particles.z_order, \
                    edgecolor = "", facecolor = particles.color, s = particles.marker_size)   
-        
+        if particles.export:
+            export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep])), particles, plotter)
+            export(np.column_stack((particles.X ,particles.Y ,particles.Z ,particles.PX ,particles.PY ,particles.PZ ,particles.Tag ,particles.Weight, particles.E)), particles, plotter, prefix = "all")
+            
     else:
         from matplotlib.colors import Normalize
         import matplotlib 
@@ -347,4 +364,9 @@ def plot_particles(ax, plotter, particles ):
                 colorVec[:,3][colorVec[:,3] > 1.0]    = 1.0
 
         ax.scatter(xAxis[0::delStep], yAxis[0::delStep],  c = colorVec[0::delStep], zOrder = particles.z_order,  edgecolor = "", s = particles.marker_size)   
-       
+        if particles.export:
+            export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep], colorVec[0::delStep])), particles, plotter)
+            export(np.column_stack((particles.X ,particles.Y ,particles.Z ,particles.PX ,particles.PY ,particles.PZ ,particles.Tag ,particles.Weight, particles.E)), particles, plotter, prefix = "all")
+ 
+
+
