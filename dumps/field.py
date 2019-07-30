@@ -167,7 +167,7 @@ def plot_field(ax, plotter, field, gridData):
     
     
     ax.imshow(currentPlane, cmap = field.colormap, vmin=field.clip_min, vmax = field.clip_max,  aspect='auto', origin='lower', \
-              alpha = field.opacity, extent=[np.min(xRange), np.max(xRange), np.min(yRange), np.max(yRange)], zOrder = field.z_order)
+              alpha = field.opacity, extent=[np.min(xRange), np.max(xRange), np.min(yRange), np.max(yRange)], zorder = field.z_order)
             
     if field.export:
         export(currentPlane, field, plotter)

@@ -79,20 +79,61 @@ def setup_plotter_copies(globalplotters, loadedPtclObjs, loadedFldObjs):
     """
     
     from dumps.dumpUtils.particlesUtils import make_particles_cuts
-    from plotter import  Plotter2D, PlotterPhaseSpace, MultiPlot
+    from plotter import  Plotter2D, PlotterPhaseSpace, MultiPlot, PlotterHist
     newplotters = []
-
+    
+#    def make_plotters(plotter):
+#        newPlotter = copy_object(plotter, PlotterPhaseSpace()) if isinstance(plotter, PlotterPhaseSpace) else copy_object(plotter, PlotterHist())  if isinstance(plotter, PlotterHist) else copy_object(plotter, Plotter2D())
+#        for localPtcl in newPlotter.particles:            # copy loaded data into Particles objects
+#            matchingIndexObj = [lPtcl for lPtcl in loadedPtclObjs if lPtcl.index  == localPtcl.index]
+#            if matchingIndexObj:
+#                localPtcl = copy_object( matchingIndexObj[0], localPtcl ) # the iterator connects loaded data with the local copy
+#                try : localPtcl.plane = plotter.plane if plotter.plane is not None else localPtcl.plane 
+#                except: pass
+#                make_particles_cuts(localPtcl)
+#        
+#        try: 
+#            for localFld  in newPlotter.fields:            # copy loaded data into Particles objects
+#                matchingIndexObj = [lFld for lFld in loadedFldObjs if lFld.index  == localFld.index]
+#                if matchingIndexObj:
+#                    localFld = copy_object( matchingIndexObj[0], localFld )
+#                    localFld.plane = plotter.plane if plotter.plane is not None else localFld.plane
+#                    localFld.plane_offset = plotter.plane_offset if plotter.plane_offset is not None else localFld.plane_offset
+#        except: pass
+#        return newPlotter
+#
+#
+#    for plotter in globalplotters:
+#        if not isinstance(plotter, MultiPlot):
+#            newplotters.append( make_plotters(plotter) )
+#            
+#    for plotter in globalplotters:
+#        if isinstance(plotter, MultiPlot):
+#            newMultiPlotter = copy_object(plotter, MultiPlot() )
+#            print "new multi plotters = " 
+#            print newMultiPlotter.plotters
+#            
+#            for localPlotter in plotter.plotters:
+#                newMultiPlotter.plotters.append( make_plotters(localPlotter) )
+#
+#            newplotters.append( newMultiPlotter )
+#            
+#            print "-----"
+#            print plotter.plotters
+#            print newMultiPlotter.plotters
+        
     for plotter in globalplotters:
         
-        if isinstance(plotter, PlotterPhaseSpace):
-            newPlotterPhaseSpace = copy_object(plotter, PlotterPhaseSpace() ) # create copy of PlotterObject including contained Particles objects
+        if isinstance(plotter, (PlotterPhaseSpace, PlotterHist)):
+            newPlotter= copy_object(plotter, PlotterPhaseSpace()) if isinstance(plotter, PlotterPhaseSpace) else copy_object(plotter, PlotterHist())   # create copy of PlotterObject including contained Particles objects
             
-            for localPtcl in newPlotterPhaseSpace.particles:            # copy loaded data into Particles objects
+            for localPtcl in newPlotter.particles:            # copy loaded data into Particles objects
                 matchingIndexObj = [lPtcl for lPtcl in loadedPtclObjs if lPtcl.index  == localPtcl.index]
                 if matchingIndexObj:
                     localPtcl = copy_object( matchingIndexObj[0], localPtcl ) # the iterator connects loaded data with the local copy
                     make_particles_cuts(localPtcl)
-            newplotters.append( newPlotterPhaseSpace )
+            newplotters.append( newPlotter )
+            
             
             
         if isinstance(plotter, Plotter2D):
@@ -119,8 +160,8 @@ def setup_plotter_copies(globalplotters, loadedPtclObjs, loadedFldObjs):
             newMultiPlotter = copy_object(plotter, MultiPlot() )
             for localPlotter in newMultiPlotter.plotters:
                 
-                if isinstance(localPlotter, PlotterPhaseSpace):
-
+                if isinstance(localPlotter, (PlotterPhaseSpace, PlotterHist)):
+            
                     for localPtcl in localPlotter.particles:            # copy loaded data into Particles objects
                         matchingIndexObj = [lPtcl for lPtcl in loadedPtclObjs if lPtcl.index  == localPtcl.index]
                         if matchingIndexObj:
