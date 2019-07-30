@@ -47,12 +47,14 @@ def plot_lines(ax, obj, gridData, plotter ):
         
         lineIDs =  set( line.quantity for line in obj.lines) if isinstance(obj, Particles) else set( str(line.axis) + "," + obj.kind + "," + str(line.component) + "," + str(line.plane) for line in obj.lines)       #group all lines with similar settings
         
-        
+
         for ID in lineIDs:
             axLine  = None
             counter = 0
             for line in obj.lines:
                 x = y =  lineBounds = 0
+                
+                
                 if not line.plot_data: continue
                 
                 if isinstance(obj, Field): 
@@ -73,8 +75,7 @@ def plot_lines(ax, obj, gridData, plotter ):
             
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
-                    axLine.plot(x - 0.5*cellSizeX, y , color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width)
-                    
+                    axLine.plot(x - 0.5*cellSizeX, y , color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width)
                     if line.export:
                         export(np.column_stack( (x - 0.5*cellSizeX,y) ), line, plotter)
                     
@@ -102,7 +103,7 @@ def plot_lines(ax, obj, gridData, plotter ):
                         c, d = ax.get_ylim()
                         return (c-d)/(a-b)*x + (c-a*d/b)/(1-a/b)
 
-                    axLine.plot(x, trafo(y)-0.5*cellSizeY, color = line.color, zOrder = line.z_order, ls = line.line_style , lw = line.line_width )
+                    axLine.plot(x, trafo(y)-0.5*cellSizeY, color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width )
                     if line.export:
                         export(np.column_stack(( x,trafo(y)-0.5*cellSizeY )), line, plotter)
                     

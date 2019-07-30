@@ -182,7 +182,7 @@ class Particles(Dump):
 
     def addLine(self, axis = "x", quantity = None, bin_size = 0.2, x_range = None, y_range = None, z_range = None, show_range = 0, \
                 operation = "mean", tick_min = None, tick_max = None, color = None, force_color= 0, invert_axis = 0,\
-                show_axis = 1, z_order = 3, export = 0, plot_data = 0):
+                show_axis = 1, z_order = 3, export = 0, plot_data = 1):
         """
         Interface for Line operations on Particles dumps. 
         User can define line or volume from which to extract data by using range-variables
@@ -321,7 +321,7 @@ def plot_particles(ax, plotter, particles ):
     delStep = int(1.0/particles.show_ratio)
     
     if particles.colorCode is None:
-        ax.scatter(xAxis[0::delStep], yAxis[0::delStep], alpha = particles.opacity, zOrder = particles.z_order, \
+        ax.scatter(xAxis[0::delStep], yAxis[0::delStep], alpha = particles.opacity, zorder = particles.z_order, \
                    edgecolor = "", facecolor = particles.color, s = particles.marker_size)   
         if particles.export:
             export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep])), particles, plotter)
@@ -363,7 +363,7 @@ def plot_particles(ax, plotter, particles ):
                 colorVec[:,3][colorVec[:,3] < 0 ]     = 0.0
                 colorVec[:,3][colorVec[:,3] > 1.0]    = 1.0
 
-        ax.scatter(xAxis[0::delStep], yAxis[0::delStep],  c = colorVec[0::delStep], zOrder = particles.z_order,  edgecolor = "", s = particles.marker_size)   
+        ax.scatter(xAxis[0::delStep], yAxis[0::delStep],  c = colorVec[0::delStep], zorder = particles.z_order,  edgecolor = "", s = particles.marker_size)   
         if particles.export:
             export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep], colorVec[0::delStep])), particles, plotter)
             export(np.column_stack((particles.X ,particles.Y ,particles.Z ,particles.PX ,particles.PY ,particles.PZ ,particles.Tag ,particles.Weight, particles.E)), particles, plotter, prefix = "all")

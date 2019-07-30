@@ -49,7 +49,7 @@ class Field(Dump):
 
     def addLine(self, component = 0, axis = "x", x_range = None, y_range = None, z_range = None, show_range = 0,\
                 operation = "mean", tick_min = None, tick_max = None, color = None, force_color = 0, invert_axis = 0,\
-                show_axis = 1, z_order = 3, export = 0, plot_data = 0):
+                show_axis = 1, z_order = 3, export = 0, plot_data = 1):
         """
         Interface for Line operations on Field dumps
         User can define line or volume from which to extract data by using range-variables
