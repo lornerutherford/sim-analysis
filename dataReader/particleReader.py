@@ -106,29 +106,33 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
     
     for currentFile in  glob.glob(pathToData + "*" + speciesName + "*_" + str(dumpNumber) + ".h5") :
         if h5py.is_hdf5(currentFile):
-
             inStream = h5py.File(currentFile)
             try:
                 speciesMatrix = np.array(inStream[ speciesName ], dtype=np.float32)
             except:
                 return 0, gridData
             
-            ptclObj.labels = inStream[ speciesName ].attrs["vsLabels"].split(",")
+            try: ptclObj.labels = inStream[ speciesName ].attrs["vsLabels"].split(",")
+            except: ptclObj.labels = {}
 
-            NDIM =    inStream[ speciesName ].attrs["numSpatialDims"]
-            ptclObj.numPtclsInMacro = int(round(inStream[ speciesName ].attrs["numPtclsInMacro"]))
+            try:  NDIM =    inStream[ speciesName ].attrs["numSpatialDims"]
+            except:       NDIM = 3
+            
+            try:      ptclObj.numPtclsInMacro = int(round(inStream[ speciesName ].attrs["numPtclsInMacro"]))
+            except: pass
+
             if "globalGridGlobalLimits" in inStream.keys():
-                ptclObj.xLab = inStream["globalGridGlobalLimits"].attrs["vsLowerBounds"][0]
+                ptclObj.xLab = inStream["globalGridGlobalLimits"].attrs["vsLowerBounds"][0]*1e6
             elif "compGridGlobalLimits" in inStream.keys():
-                ptclObj.xLab = inStream["compGridGlobalLimits"].attrs["vsLowerBounds"][0]
+                ptclObj.xLab = inStream["compGridGlobalLimits"].attrs["vsLowerBounds"][0]*1e6
             else:
                 ptclObj.xLab = 0
-            gridData = get_grid_data(inStream, gridData)
+            try:
+                gridData = get_grid_data(inStream, gridData)
+            except: pass
             inStream.close()
             
-            
-            
-            ptclObj.X      = (speciesMatrix[:,0] - ptclObj.xLab) *1e6
+            ptclObj.X      = speciesMatrix[:,0]  *1e6 - ptclObj.xLab
             ptclObj.Y      = speciesMatrix[:,1]*1e6
             
             if NDIM == 3:
