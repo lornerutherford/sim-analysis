@@ -131,7 +131,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
                 gridData = get_grid_data(inStream, gridData)
             except: pass
             inStream.close()
-            
+
             ptclObj.X      = speciesMatrix[:,0]  *1e6 - ptclObj.xLab
             ptclObj.Y      = speciesMatrix[:,1]*1e6
             
@@ -172,8 +172,8 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             eMassInMeV = const.value("electron mass energy equivalent in MeV"  )
             ptclObj.E  = eMassInMeV*(np.sqrt(1 + gammaCol**2) - 1)
             ptclObj.EX = eMassInMeV*(np.sqrt(1 + (ptclObj.PX / const.speed_of_light)**2 - 1))   
-            ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2 - 1))   
-            ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2 - 1))   
+            ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2 - 1))   
+            ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2 - 1))   
             ptclObj.Etrans = np.sqrt(ptclObj.EY**2 + ptclObj.EZ**2)
             return ptclObj, gridData
     

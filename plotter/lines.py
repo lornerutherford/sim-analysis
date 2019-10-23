@@ -75,7 +75,7 @@ def plot_lines(ax, obj, gridData, plotter ):
             
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
-                    axLine.plot(x - 0.5*cellSizeX, y , color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width)
+                    axLine.plot(x , y , color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width)
                     if line.export:
                         export(np.column_stack( (x - 0.5*cellSizeX,y) ), line, plotter)
                     
