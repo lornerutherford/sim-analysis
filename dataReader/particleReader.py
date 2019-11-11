@@ -171,9 +171,9 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             gammaCol        = np.sqrt((ptclObj.PX**2 + ptclObj.PY**2 + ptclObj.PZ**2)/(const.speed_of_light**2))
             eMassInMeV = const.value("electron mass energy equivalent in MeV"  )
             ptclObj.E  = eMassInMeV*(np.sqrt(1 + gammaCol**2) - 1)
-            ptclObj.EX = eMassInMeV*(np.sqrt(1 + (ptclObj.PX / const.speed_of_light)**2 - 1))   
-            ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2 - 1))   
-            ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2 - 1))   
+            ptclObj.EX = eMassInMeV*(np.sqrt(1 + (ptclObj.PX / const.speed_of_light)**2) - 1)   
+            ptclObj.EY = eMassInMeV*(np.sqrt(1 + (ptclObj.PY / const.speed_of_light)**2) - 1)   
+            ptclObj.EZ = eMassInMeV*(np.sqrt(1 + (ptclObj.PZ / const.speed_of_light)**2) - 1)   
             ptclObj.Etrans = np.sqrt(ptclObj.EY**2 + ptclObj.EZ**2)
             return ptclObj, gridData
     
