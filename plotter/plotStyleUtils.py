@@ -252,6 +252,11 @@ def get_unit_from_component(key):
             divisor = quantity.lower().split("b6")[1]
             divisor = "01 \%\ \mathrm{BW}" if divisor == "01" else "001 \%\ \mathrm{BW}" if divisor == "001" else "1 \%\ \mathrm{BW}" if divisor == "1" or divisor == "" else "1"
             return "$\mathrm{A\ (m^{2} \ rad^{2}}\ " + divisor + ")^{-1}\ $"
+        
+        
+        elif quantity == "twissb":
+            return "m"
+
 
         else:
             return ""

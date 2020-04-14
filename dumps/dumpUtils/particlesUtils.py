@@ -149,30 +149,40 @@ def get_quantity_from_string(ptclObj, quantity, binSize, line = 0):
 
 
 
-    
+"""
+check out https://indico.cern.ch/event/528094/contributions/2213316/attachments/1322590/1984069/L3-4-5_-_Transverse_Beam_Dynamics.pdf slide 34
+"""
 
 def get_twiss_alpha(ptclObj, direction):
-    dirVec = get_mean(ptclObj.Y*ptclObj.YP, ptclObj.Weight) if direction =="y" else get_mean(ptclObj.Z*ptclObj.ZP, ptclObj.Weight)
-    emittance = get_emittance(ptclObj, direction)
-    if emittance == 0:
-        return 0
-    return -1.0*dirVec*1e-9/(emittance/get_quantity_from_string(ptclObj, "gamma", 0))  # 1e-9 from voncersion of um*mrad to m*rad
+    locVec = ptclObj.Y*1e-6   if direction == "y" else ptclObj.Z*1e-6
+    momVec = ptclObj.PY   if direction == "y" else ptclObj.PZ
+    n = np.sum(ptclObj.Weight)
+    yPyOverPxMean   =  (1./n) * np.sum(ptclObj.Weight * locVec * (momVec/ptclObj.PX)) - (1./n**2)*np.sum(ptclObj.Weight*locVec) * np.sum(ptclObj.Weight*(momVec/ptclObj.PX)) 
+    emittance = get_emittance(ptclObj, direction, geom = 1)
+
+    # twiss_a = np.sqrt(get_twiss_beta(ptclObj, direction) * get_twiss_gamma(ptclObj, direction) -1.) # works as well
+    twiss_a = -1. * yPyOverPxMean / emittance
+    return twiss_a
     
 
 def get_twiss_beta(ptclObj, direction):
-    dirVec = get_mean(ptclObj.Y*ptclObj.Y, ptclObj.Weight) if direction =="y" else get_mean(ptclObj.Z*ptclObj.Z* ptclObj.Weight)
-    emittance = get_emittance(ptclObj, direction)
-    if emittance == 0:
-        return 0
-    return dirVec*1e-3/(emittance/get_quantity_from_string(ptclObj, "gamma", 0)) # [mm]
+    locVec = ptclObj.Y*1e-6   if direction == "y" else ptclObj.Z*1e-6
+    n = np.sum(ptclObj.Weight)
+    dirVec            = (1./n)*np.sum(ptclObj.Weight*(locVec**2)) - ((1./n)*np.sum(ptclObj.Weight*locVec))**2
+    emittance = get_emittance(ptclObj, direction, geom = 1)
+    twiss_b = (dirVec)/emittance # [m]
+
+    return twiss_b
 
 
 def get_twiss_gamma(ptclObj, direction):
-    dirVec = get_mean(ptclObj.YP*ptclObj.YP, ptclObj.Weight) if direction =="y" else get_mean(ptclObj.ZP*ptclObj.YP, ptclObj.Weight)
-    emittance = get_emittance(ptclObj, direction)
-    if emittance == 0:
-        return 0
-    return dirVec*1e-3/(emittance/get_quantity_from_string(ptclObj, "gamma", 0)) # [mrad]
+    momVec = ptclObj.PY   if direction == "y" else ptclObj.PZ
+    n = np.sum(ptclObj.Weight)
+    dirVec     = (1./n)*np.sum(ptclObj.Weight*(momVec/ptclObj.PX)**2) - ((1./n)*np.sum(ptclObj.Weight*momVec/ptclObj.PX))**2
+    emittance = get_emittance(ptclObj, direction, geom = 1)
+    twiss_g = dirVec/emittance
+    return twiss_g
+
 
 
 def get_5D_brightness(ptclObj, line, binSize):
@@ -205,7 +215,7 @@ def get_charge(weights, numPtclInMacro):
     return const.e*numPtclInMacro * np.sum(weights)*1e12
     
 
-def get_emittance(ptclObj, direction, disp = 0):
+def get_emittance(ptclObj, direction, geom = 0, disp = 0):
     locVec = ptclObj.Y   if direction == "y" else ptclObj.Z
     momVec = ptclObj.PY  if direction == "y" else ptclObj.PZ
     n = np.sum(ptclObj.Weight)
@@ -215,8 +225,8 @@ def get_emittance(ptclObj, direction, disp = 0):
     ySquaredMean            = (1./n)*np.sum(ptclObj.Weight*(locVec**2)) - ((1./n)*np.sum(ptclObj.Weight*locVec))**2
     pyOverPxSquaredMean     = (1./n)*np.sum(ptclObj.Weight*(momVec/ptclObj.PX)**2) - ((1./n)*np.sum(ptclObj.Weight*momVec/ptclObj.PX))**2
     yPyOverPxMeanSquared    = ( (1./n) * np.sum(ptclObj.Weight * locVec * (momVec/ptclObj.PX)) - (1./n**2)*np.sum(ptclObj.Weight*locVec) * np.sum(ptclObj.Weight*(momVec/ptclObj.PX)) )**2
-    gammaBeta               = (1./n)*np.sum(ptclObj.Weight*ptclObj.PX)/const.c
-    
+    gammaBeta = 1 if geom == 1 else  (1./n)*np.sum(ptclObj.Weight*ptclObj.PX)/const.c
+        
     if disp == 0:
         if ySquaredMean * pyOverPxSquaredMean - yPyOverPxMeanSquared >=0:
             return gammaBeta * np.sqrt(ySquaredMean * pyOverPxSquaredMean - yPyOverPxMeanSquared) * 1e-6

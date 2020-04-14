@@ -93,7 +93,7 @@ def check_anal_requests(analyzer):
 
 def get_quantity_val_string(quant, val):
     import numpy as np
-    quantString = '{:.2e}'.format(val) if val> 1e3 or val<1e-3 else str(np.round(val,2))
+    quantString = '{:.2e}'.format(val) if val> 1e2 or val<1e-2 else str(np.round(val,2))
     unitString  = get_unit_for_analyzer("ptcl,0,0,"+quant)
     return "           " + quant + " " * (8 - len(quant)) + "= "+ str(quantString) + " "*(9-len(str(quantString))) + unitString
 
