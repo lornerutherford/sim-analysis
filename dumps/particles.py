@@ -3,7 +3,7 @@
 
 @author: Paul Scherkl
 """
-from dump import Dump
+from .dump import Dump
 from plotter import Line
 import numpy as np
 

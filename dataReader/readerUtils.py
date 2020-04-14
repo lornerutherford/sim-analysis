@@ -80,10 +80,10 @@ def load_data(print_progress, print_gridData, pathToData,  dumpNumber, plotters,
     
     
     if print_gridData and currentGridData:
-        print "\n       -------- Grid Data ---------"
+        print("\n       -------- Grid Data ---------")
         for key in currentGridData:
-            print "       " + key + " = " + str(currentGridData[key])
-        print "       ----------------------------\n"
+            print("       " + key + " = " + str(currentGridData[key]))
+        print("       ----------------------------\n")
     
     return particleObjList, fieldObjList, currentGridData
 
@@ -137,10 +137,10 @@ def get_meta_data(print_metaData, pathToData, plotters, analyzers):
                         
                 
             
-        print "\n       -------- Meta Data --------"
+        print("\n       -------- Meta Data --------")
         for key in metaData:
-            print "       " + key + " = " + str(metaData[key])
-        print "       ---------------------------\n"
+            print("       " + key + " = " + str(metaData[key]))
+        print("       ---------------------------\n")
 
 
         return metaData
@@ -173,10 +173,10 @@ def load_meta_data(pathToData, currentSpecies, metaData):
     for currentFile in  glob.glob(pathToData + "*" + currentSpecies + "*") :
         
         if h5py.is_hdf5(currentFile):
-            inStream = h5py.File(currentFile)
+            inStream = h5py.File(currentFile, "r")
             
                 
-            if not metaData.has_key("PICName"):
+            if not "PICName" in metaData:
                 if inStream.__contains__("runInfo"):
                     metaData["PICName"] = inStream["runInfo"].attrs["vsSoftware"] + " v. " +  inStream["runInfo"].attrs["vsSwVersion"] 
                     
@@ -207,37 +207,37 @@ def get_grid_data(h5Stream, gridData):
     boxGridKey  = "globalGridGlobal"       if h5Stream.__contains__("globalGridGlobal")       else "compGridGlobal" if h5Stream.__contains__("compGridGlobal") else "update grid data reader"
     
     
-    if not gridData.has_key("NDIM"):
+    if not "NDIM" in gridData:
         if h5Stream.__contains__(boxLimitKey):
             gridData["NDIM"] = len( h5Stream[boxLimitKey].attrs["vsLowerBounds"] )
 
             
-    if not gridData.has_key("boxSize"):
+    if not "boxSize" in gridData:
         if h5Stream.__contains__(boxLimitKey):
             lowers = h5Stream[boxLimitKey].attrs["vsLowerBounds"]
             uppers = h5Stream[boxLimitKey].attrs["vsUpperBounds"]
             gridData["boxSize"] = ( uppers - lowers )* 1e6
 
-    if not gridData.has_key("numCells"):
+    if not "numCells" in gridData:
         if h5Stream.__contains__(boxGridKey):
             gridData["numCells"] = h5Stream[boxGridKey].attrs["vsNumCells"] 
 
 
-    if not gridData.has_key("cellSize"):
-        if gridData.has_key("boxSize") and gridData.has_key("numCells"):
+    if not "cellSize" in gridData:
+        if "boxSize" in gridData and "numCells" in gridData:
             gridData["cellSize"] = [ np.round(gridData["boxSize"][0]/(gridData["numCells"][0] ), 3),  np.round(gridData["boxSize"][1]/(gridData["numCells"][1] ), 3), np.round(gridData["boxSize"][2]/(gridData["numCells"][2] ), 3)  ]
 
 
             
-    if not gridData.has_key("numStep"):
+    if not "numStep" in gridData:
         if h5Stream.__contains__("time"):
             gridData["numStep"] = h5Stream["time"].attrs["vsStep"]
             
-    if not gridData.has_key("runTime") or (gridData.has_key("runTime") and gridData["runTime"] == 0.0):
+    if not "runTime" in gridData or ("runTime" in gridData and gridData["runTime"] == 0.0):
         if h5Stream.__contains__("time"):
             gridData["runTime"] = h5Stream["time"].attrs["vsTime"]
 
-    if not gridData.has_key("timeStep"):
+    if not "timeStep" in gridData:
         if h5Stream.__contains__("time"):
             gridData["timeStep"] = gridData["runTime"]/gridData["numStep"]
     return gridData

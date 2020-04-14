@@ -5,7 +5,7 @@ Created on Wed Jan 17 14:41:22 2018
 @author: nxb15186
 """
 
-from analyzer import Analyzer
+from .analyzer import Analyzer
 
 class ParticlesAnalyzer(Analyzer):
     

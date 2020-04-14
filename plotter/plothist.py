@@ -5,7 +5,7 @@ Created on Sun Dec 02 13:30:54 2018
 @author: Paul Scherkl
 """
 
-from plot import Plotter
+from .plot import Plotter
 import numpy as np
 
 

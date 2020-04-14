@@ -13,9 +13,9 @@ from utils.miscUtils  import copy_object
 
 
 def print_start_message():
-    print "------------------------------------------------------------------------------------------------------"
-    print " picVisualizer v1.02.03 (2018) by Paul Scherkl (University of Strathclyde, paul.scherkl@strath.ac.uk) "
-    print "------------------------------------------------------------------------------------------------------"
+    print("------------------------------------------------------------------------------------------------------")
+    print(" picVisualizer v1.03.00 (2020) by Paul Scherkl (University of Strathclyde, paul.scherkl@strath.ac.uk) ")
+    print("------------------------------------------------------------------------------------------------------")
 
 
 
@@ -82,45 +82,6 @@ def setup_plotter_copies(globalplotters, loadedPtclObjs, loadedFldObjs):
     from plotter import  Plotter2D, PlotterPhaseSpace, MultiPlot, PlotterHist
     newplotters = []
     
-#    def make_plotters(plotter):
-#        newPlotter = copy_object(plotter, PlotterPhaseSpace()) if isinstance(plotter, PlotterPhaseSpace) else copy_object(plotter, PlotterHist())  if isinstance(plotter, PlotterHist) else copy_object(plotter, Plotter2D())
-#        for localPtcl in newPlotter.particles:            # copy loaded data into Particles objects
-#            matchingIndexObj = [lPtcl for lPtcl in loadedPtclObjs if lPtcl.index  == localPtcl.index]
-#            if matchingIndexObj:
-#                localPtcl = copy_object( matchingIndexObj[0], localPtcl ) # the iterator connects loaded data with the local copy
-#                try : localPtcl.plane = plotter.plane if plotter.plane is not None else localPtcl.plane 
-#                except: pass
-#                make_particles_cuts(localPtcl)
-#        
-#        try: 
-#            for localFld  in newPlotter.fields:            # copy loaded data into Particles objects
-#                matchingIndexObj = [lFld for lFld in loadedFldObjs if lFld.index  == localFld.index]
-#                if matchingIndexObj:
-#                    localFld = copy_object( matchingIndexObj[0], localFld )
-#                    localFld.plane = plotter.plane if plotter.plane is not None else localFld.plane
-#                    localFld.plane_offset = plotter.plane_offset if plotter.plane_offset is not None else localFld.plane_offset
-#        except: pass
-#        return newPlotter
-#
-#
-#    for plotter in globalplotters:
-#        if not isinstance(plotter, MultiPlot):
-#            newplotters.append( make_plotters(plotter) )
-#            
-#    for plotter in globalplotters:
-#        if isinstance(plotter, MultiPlot):
-#            newMultiPlotter = copy_object(plotter, MultiPlot() )
-#            print "new multi plotters = " 
-#            print newMultiPlotter.plotters
-#            
-#            for localPlotter in plotter.plotters:
-#                newMultiPlotter.plotters.append( make_plotters(localPlotter) )
-#
-#            newplotters.append( newMultiPlotter )
-#            
-#            print "-----"
-#            print plotter.plotters
-#            print newMultiPlotter.plotters
         
     for plotter in globalplotters:
         

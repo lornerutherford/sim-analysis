@@ -30,7 +30,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
         create_directory(analyzer.outPath)
         
         if analyzer.print_data and loadCheck: 
-            print "\n       ----- Analyzer " + str(counter) + " data -----" 
+            print("\n       ----- Analyzer " + str(counter) + " data -----" )
             if is_first and analyzer.save_summary_txt:
                 with open(summaryOutName, "w") as f:
                     f.write("\n       ----- Analyzer " + str(counter) + " data -----")
@@ -44,7 +44,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
             for i in range(len(analyzer.particles)):
                 
                 ptcls = analyzer.particles[i]
-                if analyzer.print_data and ptcls.loaded: print "           ---- " + ptcls.name  + " ----"
+                if analyzer.print_data and ptcls.loaded: print("           ---- " + ptcls.name  + " ----")
                 if analyzer.save_summary_txt and ptcls.loaded: 
                     with open(summaryOutName, "a") as f:
                         f.write("\n\n           ---- " + ptcls.name + "_" + str(dumpNumber) + " ----")
@@ -53,7 +53,7 @@ def analyze_data(analyzerList, gridData, dumpNumber, is_first, tmpAnalDataList):
                 tmpAnalData      = {"dumpNum":[dumpNumber]}
                 for quant in analyzer.quantityList:
                     tmpAnalData[quant] = [get_quantity_from_string(ptcls, quant, analyzer.bin_size)] if ptcls.loaded else [0]
-                    if analyzer.print_data and ptcls.loaded: print get_quantity_val_string(quant, tmpAnalData[quant][0])
+                    if analyzer.print_data and ptcls.loaded: print(get_quantity_val_string(quant, tmpAnalData[quant][0]))
                     if analyzer.save_summary_txt and ptcls.loaded: 
                         with open(summaryOutName, "a") as f:
                             f.write("\n" + get_quantity_val_string(quant, tmpAnalData[quant][0]))

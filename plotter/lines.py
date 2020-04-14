@@ -69,7 +69,7 @@ def plot_lines(ax, obj, gridData, plotter ):
                 
                 cellSizeX = 1.0
                 cellSizeY = 1.0
-                if gridData.has_key("cellSize"):
+                if "cellSize" in gridData:
                     cellSizeX = gridData["cellSize"][0] if line.plane[0] == "x" else gridData["cellSize"][1] if line.plane[0] == "y" else gridData["cellSize"][2]
                     cellSizeY = gridData["cellSize"][0] if line.plane[1] == "x" else gridData["cellSize"][1] if line.plane[1] == "y" else gridData["cellSize"][2]
             

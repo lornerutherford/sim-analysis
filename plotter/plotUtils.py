@@ -5,7 +5,7 @@ Created on Fri Feb 02 13:44:21 2018
 @author: Paul Scherkl
 """
 import numpy as np
-from plotStyleUtils import get_label_from_key, get_unit_from_component, get_figure_labels, set_axis_label, get_axis_ticks
+from .plotStyleUtils import get_label_from_key, get_unit_from_component, get_figure_labels, set_axis_label, get_axis_ticks
 
 
 
@@ -78,17 +78,17 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
     figWidth = fig.get_figwidth() 
     
     for i in range(len(lineAxesX)):
-        axisData = lineAxesX[i].items()[0]
+
+        axisData = lineAxesX[i][list(lineAxesX[i].keys())[0] ]
         start = axPos.x1 + (i*(plotter.colorbarSpacing)/figWidth  )
         end   = 0.001/figWidth    
         axis = fig.add_axes([ start ,    axPos.y0,   end ,     axPos.height])
         
-        format_line_axis(axis, axisData[0], axisData[1])
-        if axisData[1][5]: 
+        format_line_axis(axis, list(lineAxesX[i].keys())[0], axisData)
+        if axisData[5]: 
             axis.invert_yaxis()
       
-    
-    numLineAxes = sum( [(key.keys()[0][0] is not key.keys()[0][-1]) for key in lineAxesX] )
+    numLineAxes = len(lineAxesX)
     counterTop = 0
     counter = 0
 
@@ -320,14 +320,14 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
             
     elif isinstance(obj, (FieldLine, ParticlesLine)):
         if isinstance(obj, FieldLine) :
-            currentKey = "fldLine," +  str(obj.axis) + "," + str(field.plane) + "," + field.kind + "," + str(obj.component) 
+            currentKey = "fldLine," +  str(obj.axis) + "," + str(field.plane) + "," + str(field.kind) + "," + str(obj.component) 
         else: 
-            currentKey = "ptclLine," +  str(obj.axis) + "," + str(particles.plane) + "," + obj.quantity 
+            currentKey = "ptclLine," +  str(obj.axis) + "," + str(particles.plane) + "," + (obj.quantity) 
      
     if currentKey is not None:
 
         switchList = []
-        if not outputList.has_key(currentKey):
+        if not currentKey in outputList:
             outputList[currentKey] = []
 
         minVal = 0
@@ -339,9 +339,11 @@ def find_common_plot_settings(obj, outputList, plot = None, gridData = None, fie
                 data = [0,0]
         elif isinstance(obj, (FieldLine, ParticlesLine)):
                 idx = 1 if obj.axis == obj.plane[0] else 0
-                data = get_line_data_field(obj, field, gridData)[idx] if isinstance(obj, FieldLine) else get_line_data_particles(obj, particles, gridData)[idx]
-                if data is None or (isinstance(obj, FieldLine) and not field.loaded) or  (isinstance(obj, ParticlesLine) and not particles.loaded):
-                    data = [0,0]
+                if (isinstance(obj, FieldLine) and not field.loaded) or  (isinstance(obj, ParticlesLine) and not particles.loaded): data = [0,0]
+                else:  
+                    data = get_line_data_field(obj, field, gridData)[idx] if isinstance(obj, FieldLine) else get_line_data_particles(obj, particles, gridData)[idx]
+                    if data is None:
+                        data = [0,0]
         userRequestSwitch = [0,0] # corresponds to min and max val. 0: no requested clip, 1 = requested clip
         if (isinstance(obj, (Particles, Field)) and obj.clip_min is None) or (isinstance(obj, (FieldLine, ParticlesLine)) and obj.tick_min is None):
             minVal = np.min(data)

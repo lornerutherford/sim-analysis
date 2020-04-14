@@ -61,7 +61,7 @@ def get_quantity_from_string(ptclObj, quantity, binSize, line = 0):
         return get_mean(ptclObj.X, ptclObj.Weight)
     
     elif quantity.lower() == "posxlab":
-        return get_mean(ptclObj.X, ptclObj.Weight) + ptclObj.xLab
+       return get_mean(ptclObj.X, ptclObj.Weight) + ptclObj.xLab
     
     elif quantity.lower() == "posy":
         return get_mean(ptclObj.Y, ptclObj.Weight)
@@ -156,7 +156,7 @@ def get_twiss_alpha(ptclObj, direction):
     emittance = get_emittance(ptclObj, direction)
     if emittance == 0:
         return 0
-    return -1.0*dirVec*1e-9/emittance  # 1e-9 from voncersion of um*mrad to m*rad
+    return -1.0*dirVec*1e-9/(emittance/get_quantity_from_string(ptclObj, "gamma", 0))  # 1e-9 from voncersion of um*mrad to m*rad
     
 
 def get_twiss_beta(ptclObj, direction):
@@ -164,7 +164,7 @@ def get_twiss_beta(ptclObj, direction):
     emittance = get_emittance(ptclObj, direction)
     if emittance == 0:
         return 0
-    return dirVec*1e-3/emittance # [mm]
+    return dirVec*1e-3/(emittance/get_quantity_from_string(ptclObj, "gamma", 0)) # [mm]
 
 
 def get_twiss_gamma(ptclObj, direction):
@@ -172,7 +172,7 @@ def get_twiss_gamma(ptclObj, direction):
     emittance = get_emittance(ptclObj, direction)
     if emittance == 0:
         return 0
-    return dirVec*1e-3/emittance # [mrad]
+    return dirVec*1e-3/(emittance/get_quantity_from_string(ptclObj, "gamma", 0)) # [mrad]
 
 
 def get_5D_brightness(ptclObj, line, binSize):
@@ -324,42 +324,41 @@ def get_particles_vector_from_string(obj, inString):
     
     """
 
-    if isinstance(inString, basestring):
-        if inString.lower() == "x":
-            return obj.X
-        elif inString.lower() == "y":
-            return obj.Y
-        elif inString.lower() == "z":
-            return obj.Z
-        elif inString.lower() == "px":
-            return obj.PX
-        elif inString.lower() == "py":
-            return obj.PY
-        elif inString.lower() == "pz":
-            return obj.PZ
-        elif inString.lower() == "t":
-            return obj.T
-        elif inString.lower() == "yp":
-            return obj.YP
-        elif inString.lower() == "zp":
-            return obj.ZP
-        elif inString.lower() == "e" or inString.lower() == "energy":
-            return obj.E
-        elif inString.lower() == "tag":
-            return obj.Tag
-        elif inString.lower() == "weight":
-            return obj.Weight
-        elif inString.lower() == "ex" :
-            return obj.EX
-        elif inString.lower() == "ey" :
-            return obj.EY
-        elif inString.lower() == "ez" :
-            return obj.EZ
-        elif inString.lower() == "etrans" :
-            return obj.Etrans
-        else:
-            return 0
-        
+    if inString.lower() == "x":
+        return obj.X
+    elif inString.lower() == "y":
+        return obj.Y
+    elif inString.lower() == "z":
+        return obj.Z
+    elif inString.lower() == "px":
+        return obj.PX
+    elif inString.lower() == "py":
+        return obj.PY
+    elif inString.lower() == "pz":
+        return obj.PZ
+    elif inString.lower() == "t":
+        return obj.T
+    elif inString.lower() == "yp":
+        return obj.YP
+    elif inString.lower() == "zp":
+        return obj.ZP
+    elif inString.lower() == "e" or inString.lower() == "energy":
+        return obj.E
+    elif inString.lower() == "tag":
+        return obj.Tag
+    elif inString.lower() == "weight":
+        return obj.Weight
+    elif inString.lower() == "ex" :
+        return obj.EX
+    elif inString.lower() == "ey" :
+        return obj.EY
+    elif inString.lower() == "ez" :
+        return obj.EZ
+    elif inString.lower() == "etrans" :
+        return obj.Etrans
+    else:
+        return 0
+    
 
 
 

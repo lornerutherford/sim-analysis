@@ -6,7 +6,7 @@ picViz class for phase space plots (inherited from Plotter class)
 provides framework to produce arbitrary plots for particle species
 """
 
-from plot import Plotter
+from .plot import Plotter
 from dumps.dumpUtils.particlesUtils import get_particles_vector_from_string
 import numpy as np
 

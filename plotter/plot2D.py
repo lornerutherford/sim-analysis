@@ -8,7 +8,7 @@ provides framework to produce arbitrary plots for particle and field species
 """
 
 
-from plot import Plotter
+from .plot import Plotter
 import numpy as np
 
 

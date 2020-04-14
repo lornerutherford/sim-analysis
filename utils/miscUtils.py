@@ -66,17 +66,13 @@ def copy_object(source, target):
 
 def create_directory(path):
     import os
-    if not isinstance(path, basestring ):
-        print ("   (!) Given variable " + str(path) +" is not a valid string for Outpath, command ignored")
-        return
-    else:
-        if not os.path.isdir(path):
-            try:
-                os.makedirs(path)
-                return path
-            except:
-                print ("   (!) Could no create directory " + path +" for outPath, command ignored")
-                return
+    if not os.path.isdir(path):
+        try:
+            os.makedirs(path)
+            return path
+        except:
+            print ("   (!) Could no create directory " + path +" for outPath, command ignored")
+            return
 
 
 def export(data, dumpObj, plotter, prefix = ""):

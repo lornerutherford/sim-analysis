@@ -120,7 +120,7 @@ def make_plots(plotList, gridData, dumpNumber):
                        
             plt.close(fig)
             stopTime = time.time()
-            print "   Figure plotting lasted " + str(stopTime - startTime) + " s"
+            print("   Figure plotting lasted " + str(stopTime - startTime) + " s")
 
             
             

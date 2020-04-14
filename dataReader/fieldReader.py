@@ -56,7 +56,7 @@ def load_field(print_progress, pathToData, dumpNumber, fldList, loadedFldObjs, g
             if isinstance(newFldObj, Field): # loading successful
                 loadedFldObjs.append(newFldObj)
                 if print_progress:
-                        print "       " + fld.name + "_" + str(dumpNumber) + " loaded"
+                        print("       " + fld.name + "_" + str(dumpNumber) + " loaded")
                         
             elif newFldObj == 0:
                 print ("       (!) Warning: Cannot read field file " + fld.name + "_" + str(dumpNumber) + ", ignored")
@@ -99,7 +99,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
     for currentFile in  glob.glob(pathToData + "*" + currentSpecies + "_" + str(dumpNumber) + ".h5") :
         if h5py.is_hdf5(currentFile):
             
-            inStream = h5py.File(currentFile)
+            inStream = h5py.File(currentFile,"r")
 
             if inStream.__contains__(currentSpecies):
                 fldObj.fieldMatrix = np.array(inStream [ currentSpecies ], dtype=np.float64) 

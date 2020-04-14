@@ -3,7 +3,7 @@
 
 @author: Paul Scherkl
 """
-from dump  import Dump
+from .dump import Dump
 import colormaps as customColMaps
 from matplotlib import pyplot as plt
 from plotter import Line
@@ -34,7 +34,7 @@ class Field(Dump):
             
         self.kind         = kind
         self.component    = component
-        self.plane_offset  = plane_offset
+        self.plane_offset = plane_offset
         self.project      = project
         
         self.opacity      = opacity

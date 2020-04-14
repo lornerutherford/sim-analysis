@@ -58,12 +58,12 @@ def load_particles(print_progress, pathToData, dumpNumber, ptclList, loadedPtclO
                 if len(newPtclObj.X) == 0:
                     newPtclObj.loaded = 0
                     if print_progress:
-                        print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded, but empty due to cuts, ignored"
+                        print("       " + ptcl.name + "_" + str(dumpNumber) + " loaded, but empty due to cuts, ignored")
                 else: 
                     newPtclObj.loaded = 1
                     loadedPtclObjs.append(newPtclObj)
                     if print_progress:
-                        print "       " + ptcl.name + "_" + str(dumpNumber) + " loaded"
+                        print("       " + ptcl.name + "_" + str(dumpNumber) + " loaded")
                 
             elif newPtclObj == 0:
                 print ("       (!) Warning: Cannot read particle file " + ptcl.name + "_" + str(dumpNumber) + ", ignored")
@@ -106,7 +106,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
     
     for currentFile in  glob.glob(pathToData + "*" + speciesName + "*_" + str(dumpNumber) + ".h5") :
         if h5py.is_hdf5(currentFile):
-            inStream = h5py.File(currentFile)
+            inStream = h5py.File(currentFile,"r")
             try:
                 speciesMatrix = np.array(inStream[ speciesName ], dtype=np.float32)
             except:
@@ -127,9 +127,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
                 ptclObj.xLab = inStream["compGridGlobalLimits"].attrs["vsLowerBounds"][0]*1e6
             else:
                 ptclObj.xLab = 0
-            try:
-                gridData = get_grid_data(inStream, gridData)
-            except: pass
+            gridData = get_grid_data(inStream, gridData)
             inStream.close()
 
             ptclObj.X      = speciesMatrix[:,0]  *1e6 - ptclObj.xLab

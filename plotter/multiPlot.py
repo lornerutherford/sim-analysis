@@ -5,8 +5,8 @@
 """
 import inspect
 
-from plot import Plotter
-from plotter     import Plotter2D, PlotterPhaseSpace
+from .plot import Plotter
+from plotter  import Plotter2D, PlotterPhaseSpace
 
 
 class MultiPlot(Plotter):
