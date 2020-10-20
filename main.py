@@ -468,7 +468,7 @@ class picVIZ(object):
         return newPlotter
 
 
-    def add_multi_plot(self, plot_list = [], grid = [], fig_height = 6, make_fig = 1, save_fig = 1, dpi = 500):
+    def add_multi_plot(self, plot_list = [], grid = [], fig_height = 6, make_fig = 1, save_fig = 1, dpi = 500, axisSpacingX = 1.4,axisSpacingY = 1.1):
         """
         Generates new multiplot object
         
@@ -520,7 +520,7 @@ class picVIZ(object):
                 self.ptclIndex += 1
 
                 
-        newPlotter         = MultiPlot( plotters =temp_plotList, fig_height=fig_height,  grid=grid, make_fig=make_fig, save_fig=save_fig , dpi = dpi )
+        newPlotter         = MultiPlot( plotters =temp_plotList, fig_height=fig_height,  grid=grid, make_fig=make_fig, save_fig=save_fig , dpi = dpi , axisSpacingX = axisSpacingX, axisSpacingY = axisSpacingY)
         newPlotter.outPath = self.outPath
         self.globalPlotterList.append( newPlotter )
         return newPlotter

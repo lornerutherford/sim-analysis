@@ -93,9 +93,12 @@ def draw_line_axes(fig, axMain, plotter, lineAxisList, gridData):
     counter = 0
 
     for i in range(len(lineAxesY)):
-        axisData = lineAxesY[i].items()[0]
-        key  = axisData[0]
-        data = axisData[1]
+        # axisData = lineAxesY[i].items()[0]
+        axisData = lineAxesY[i][list(lineAxesY[i].keys())[0] ]
+        # key  = axisData[0]
+        key  = list(lineAxesY[i].keys())[i]
+        # data = axisData[1]
+        data = axisData
 
         figHeight = fig.get_figheight() 
         

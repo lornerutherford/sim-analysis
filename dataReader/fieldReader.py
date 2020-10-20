@@ -102,7 +102,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
             inStream = h5py.File(currentFile,"r")
 
             if inStream.__contains__(currentSpecies):
-                fldObj.fieldMatrix = np.array(inStream [ currentSpecies ], dtype=np.float64) 
+                fldObj.fieldMatrix = np.array(inStream [ currentSpecies ]) 
             else:
                 return 0, gridData
             

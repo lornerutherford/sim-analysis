@@ -83,7 +83,10 @@ def export(data, dumpObj, plotter, prefix = ""):
     path = ""
     if  isinstance(dumpObj, Particles):
         name = "Ptcl_"
-        name +=  dumpObj.name + "_" + plotter.plane + "_" + str(dumpObj.index)
+        try:
+            name +=  dumpObj.name + "_" + plotter.plane + "_" + str(dumpObj.index)
+        except:
+            name +=  dumpObj.name + "_" + plotter.direction + "_" + str(dumpObj.index)
         path = plotter.outPath + dumpObj.name + "//"
         
     elif  isinstance(dumpObj, Field):
@@ -101,4 +104,12 @@ def export(data, dumpObj, plotter, prefix = ""):
     create_directory(path)
     outfile = path  + str(name)+ "_" + str(prefix) + str(plotter.dumpNumber) +".txt"
     np.savetxt(outfile, data, fmt='%.9f', delimiter='    ', newline='\n', header= '', footer='', comments='')
+
+
+
+
+
+
+
+
 

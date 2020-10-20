@@ -108,7 +108,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
         if h5py.is_hdf5(currentFile):
             inStream = h5py.File(currentFile,"r")
             try:
-                speciesMatrix = np.array(inStream[ speciesName ], dtype=np.float32)
+                speciesMatrix = np.array(inStream[ speciesName ])
             except:
                 return 0, gridData
             

@@ -201,7 +201,7 @@ def mergeData(a, b):
                     a[key] = np.append(a[key], np.float64(0.0))
         
     for key in b.keys():
-        if not a.has_key(key):
+        if not key in a:
             a[key] = np.zeros(len(a["dumpNum"]) )
     
     for i in range(len(b["dumpNum"])):

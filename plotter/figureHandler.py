@@ -174,9 +174,7 @@ def make_figure_and_axes(plotter, gridData, colBarList  = [], lineAxisList = [])
                     col = 0
                     currentJ -= plotter.grid[i] 
                     
-        
-                
-                
+               
             yStart  = 1.0 - plotter.axisSpacingY/plotter.fig_height*row - (1 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) - 1))  /  len(plotter.grid)  *  row 
             yHeight = (1.0 - plotter.axisSpacingY/plotter.fig_height*(len(plotter.grid) -1))/len(plotter.grid)
             yRatio  = 1.0
