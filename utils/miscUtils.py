@@ -79,14 +79,18 @@ def export(data, dumpObj, plotter, prefix = ""):
     """exports arbitrary data to file (at pathToData)"""
     import numpy as np
     from dumps   import Particles, Field, FieldLine, ParticlesLine
+    from plotter import  Plotter2D, PlotterPhaseSpace, PlotterHist
+
     name = ""
     path = ""
     if  isinstance(dumpObj, Particles):
         name = "Ptcl_"
-        try:
-            name +=  dumpObj.name + "_" + plotter.plane + "_" + str(dumpObj.index)
-        except:
+        if isinstance(plotter, PlotterPhaseSpace):
             name +=  dumpObj.name + "_" + plotter.direction + "_" + str(dumpObj.index)
+            
+        elif isinstance(plotter, Plotter2D):
+            name +=  dumpObj.name + "_" + plotter.plane + "_" + str(dumpObj.index)
+            
         path = plotter.outPath + dumpObj.name + "//"
         
     elif  isinstance(dumpObj, Field):
@@ -102,7 +106,7 @@ def export(data, dumpObj, plotter, prefix = ""):
     if prefix is not "":
         prefix += "_"
     create_directory(path)
-    outfile = path  + str(name)+ "_" + str(prefix) + str(plotter.dumpNumber) +".txt"
+    # outfile = path  + str(name)+ "_" + str(prefix) + str(plotter.dumpNumber) +".txt"
     np.savetxt(outfile, data, fmt='%.9f', delimiter='    ', newline='\n', header= '', footer='', comments='')
 
 

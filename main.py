@@ -298,7 +298,7 @@ class picVIZ(object):
         
 
 #        
-    def add_2D_plot(self, particles = [], fields = [], plane = None,  plane_offset = None, fig_size = [8,6], x_lim = [], y_lim = [], auto_aspect_ratio = True, show_sim_progress = 0, make_fig = 1, save_fig = 1, dpi = 500):
+    def add_2D_plot(self, particles = [], fields = [], plane = "xy",  plane_offset = 0, fig_size = [8,6], x_lim = [], y_lim = [], auto_aspect_ratio = True, show_sim_progress = 0, make_fig = 1, save_fig = 1, dpi = 500):
         """
         Generates new 2D plot object
         
