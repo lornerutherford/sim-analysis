@@ -118,7 +118,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             try:  NDIM =    inStream[ speciesName ].attrs["numSpatialDims"]
             except:       NDIM = 3
             
-            try:      ptclObj.numPtclsInMacro = int(round(inStream[ speciesName ].attrs["numPtclsInMacro"]))
+            try:      ptclObj.numPtclsInMacro = inStream[ speciesName ].attrs["numPtclsInMacro"]
             except: pass
 
             if "globalGridGlobalLimits" in inStream.keys():
@@ -129,6 +129,7 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
                 ptclObj.xLab = 0
             gridData = get_grid_data(inStream, gridData)
             inStream.close()
+
 
             ptclObj.X      = speciesMatrix[:,0]  *1e6 - ptclObj.xLab
             ptclObj.Y      = speciesMatrix[:,1]*1e6
@@ -148,12 +149,14 @@ def load_particles_file_vsim(pathToData, dumpNumber, speciesName, ptclObj, gridD
             if speciesName + "_tag" in ptclObj.labels:
                 ptclObj.Tag = speciesMatrix[:,ptclObj.labels.index(speciesName + "_tag")]
             else:
-                ptclObj.Tag = np.zeros(len(ptclObj.X))
+                try:    ptclObj.Tag = speciesMatrix[:, 6]
+                except: ptclObj.Tag    = np.ones(len(ptclObj.X))
                 
             if speciesName + "_weight" in ptclObj.labels:
                 ptclObj.Weight = speciesMatrix[:, ptclObj.labels.index(speciesName + "_weight")]
             else:
-                ptclObj.Weight    = np.ones(len(ptclObj.X))
+                try:    ptclObj.Weight = speciesMatrix[:, 7]
+                except: ptclObj.Weight    = np.ones(len(ptclObj.X))
                 
             if np.max(ptclObj.PX) > 0:
                 ptclObj.YP     = ptclObj.PY / ptclObj.PX * 1000
