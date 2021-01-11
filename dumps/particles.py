@@ -322,7 +322,7 @@ def plot_particles(ax, plotter, particles ):
     
     if particles.colorCode is None:
         ax.scatter(xAxis[0::delStep], yAxis[0::delStep], alpha = particles.opacity, zorder = particles.z_order, \
-                   edgecolor = "", facecolor = particles.color, s = particles.marker_size)   
+                   edgecolor = None, facecolor = particles.color, s = particles.marker_size)   
         if particles.export:
             export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep])), particles, plotter)
             export(np.column_stack((particles.X ,particles.Y ,particles.Z ,particles.PX ,particles.PY ,particles.PZ ,particles.Tag ,particles.Weight, particles.E)), particles, plotter, prefix = "all")
@@ -363,7 +363,7 @@ def plot_particles(ax, plotter, particles ):
                 colorVec[:,3][colorVec[:,3] < 0 ]     = 0.0
                 colorVec[:,3][colorVec[:,3] > 1.0]    = 1.0
 
-        ax.scatter(xAxis[0::delStep], yAxis[0::delStep],  c = colorVec[0::delStep], zorder = particles.z_order,  edgecolor = "", s = particles.marker_size)   
+        ax.scatter(xAxis[0::delStep], yAxis[0::delStep],  c = colorVec[0::delStep], zorder = particles.z_order,  edgecolor = None, s = particles.marker_size)   
         if particles.export:
             export(np.column_stack((xAxis[0::delStep], yAxis[0::delStep], colorVec[0::delStep])), particles, plotter)
             export(np.column_stack((particles.X ,particles.Y ,particles.Z ,particles.PX ,particles.PY ,particles.PZ ,particles.Tag ,particles.Weight, particles.E)), particles, plotter, prefix = "all")
