@@ -13,6 +13,7 @@ This file sets up the code and controls data processing
 
 import inspect
 import matplotlib
+matplotlib.use('agg')
 
 
 
@@ -341,8 +342,9 @@ class picVIZ(object):
         make_fig: bool
             defines if Plot shall be computed or not
         
-        save_fig: bool
+        save_fig: bool or int
             defines if plot shall be saved or not
+            use this number to also define the number of digits or leading zeros in the numbering system. (1: 1, 2: 01, 3: 001, 4: 0001 etc)
             
         dpi: float
             defines plot DPI
@@ -531,7 +533,7 @@ class picVIZ(object):
     
 
 
-    def add_particles_analyzer(self, particles = [], quantityList = [], bin_size = 0.1, print_data = True, save_txt = True, save_summary_txt = True, file_name = None, use_existing_file = False):
+    def add_particles_analyzer(self, particles = [], quantityList = [], bin_size = 0.1, print_data = True, save_txt = True, save_summary_txt = True, file_name = None, use_existing_file = False, headers = 1):
         """
         Generates new ParticlesAnalyzer object
         
@@ -577,6 +579,11 @@ class picVIZ(object):
         use_existing_file: bool
             if true, picViz tries to add output data to an existing txt file. Otherwise, any existing file with identical name will be overwritten
             
+        headers: int
+            Change the headings of the txt file
+                1 : Quantity and Units on one single line (default)
+                2 : Quantity and Units on two separate lines
+            
         Returns
         -------
         ParticlesAnalyzer object that controls statistical post-processing        
@@ -591,7 +598,7 @@ class picVIZ(object):
         for globalPtclObj in particles:
             localPtclObj.append( copy_object(globalPtclObj, Particles() ) )
             
-        newAnalyzer         = ParticlesAnalyzer( localPtclObj, quantityList=quantityList, bin_size = bin_size, print_data=print_data, save_txt = save_txt, save_summary_txt = save_summary_txt, file_name = file_name, use_existing_file=use_existing_file )
+        newAnalyzer         = ParticlesAnalyzer( localPtclObj, quantityList=quantityList, bin_size = bin_size, print_data=print_data, save_txt = save_txt, save_summary_txt = save_summary_txt, file_name = file_name, use_existing_file=use_existing_file, headers=headers )
         newAnalyzer.outPath = self.outPath
         self.globalAnalyzerList.append( newAnalyzer )
         return newAnalyzer

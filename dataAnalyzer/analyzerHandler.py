@@ -166,23 +166,57 @@ def save_analyzer_file(data, analyzer, counter, speciesName):
     
     columnWidth = 26 # characters
     decimals    = 6
-    def formatHeader(names):
-        
-        for i in range(len(names)):
-            if names[i] is not "dumpNum":
-                unit = get_unit_for_analyzer("ptcl,0,0,"+names[i])  if isinstance(analyzer, ParticlesAnalyzer)  else ""
-                nameLen = len(names[i] ) + len(unit) + 2
-                string1 = " " * ( columnWidth - nameLen ) if i is not 1 else " " * ( columnWidth - nameLen -4)
-                names[i] = string1 + names[i] + "(" + unit + ")"
-        return names
     
-    colNames =  ["dumpNum"] + analyzer.quantityList + [ key for key in data.keys() if key not in analyzer.quantityList and key.find("dumpNum") == -1 ]
-    df = pd.DataFrame( data, columns  = colNames)
-    df = df.sort_values(by=['dumpNum'])
-    try:
-        df.to_csv(get_analyzer_file_name(analyzer, counter, speciesName) , index  = False, sep = "\t", float_format = "%"+str(columnWidth)+"."+str(decimals)+"e", header = formatHeader(colNames) )
-    except:
-        print ("       (!) Warning: path for analyzer output does not exist  \"" + analyzer.outPath + "\", ignored")
+    if analyzer.headers == 2:
+    
+        def formatHeader(names):
+            
+            for i in range(len(names)):
+                if names[i] is not "dumpNum":
+                    nameLen = len(names[i] )
+                    string1 = " " * ( columnWidth - nameLen )
+                    names[i] = string1 + names[i]
+            return names
+            
+        def formatUnit(names):
+            
+            for i in range(len(names)):
+                if names[i] is not "dumpNum":
+                    unit = get_unit_for_analyzer("ptcl,0,0,"+names[i])  if isinstance(analyzer, ParticlesAnalyzer)  else ""
+                    names[i] = unit
+            return names
+        
+        colNames =  ["dumpNum"] + analyzer.quantityList + [ key for key in data.keys() if key not in analyzer.quantityList and key.find("dumpNum") == -1 ]
+        
+        df = pd.DataFrame( data, columns  = colNames)
+        df = df.sort_values(by=['dumpNum'])
+        df.columns = pd.MultiIndex.from_tuples(zip(df.columns, ["dumpNum"] +formatUnit(colNames)))
+        
+        try:
+            df.to_csv(get_analyzer_file_name(analyzer, counter, speciesName) , index  = False, sep = ",", float_format = "%"+str(columnWidth)+"."+str(decimals)+"e" )
+        except:
+            print ("       (!) Warning: path for analyzer output does not exist  \"" + analyzer.outPath + "\", ignored")
+            
+    else:
+    
+        def formatHeader(names):
+            for i in range(len(names)):
+                if names[i] is not "dumpNum":
+                    unit = get_unit_for_analyzer("ptcl,0,0,"+names[i])  if isinstance(analyzer, ParticlesAnalyzer)  else ""
+                    nameLen = len(names[i] ) + len(unit) + 2
+                    string1 = " " * ( columnWidth - nameLen ) if i is not 1 else " " * ( columnWidth - nameLen -4)
+                    names[i] = string1 + names[i] + "(" + unit + ")"
+            return names
+    
+        colNames =  ["dumpNum"] + analyzer.quantityList + [ key for key in data.keys() if key not in analyzer.quantityList and key.find("dumpNum") == -1 ]
+        df = pd.DataFrame( data, columns  = colNames)
+        df = df.sort_values(by=['dumpNum'])
+        try:
+            df.to_csv(get_analyzer_file_name(analyzer, counter, speciesName) , index  = False, sep = "\t", float_format = "%"+str(columnWidth)+"."+str(decimals)+"e", header = formatHeader(colNames) )
+        except:
+            print ("       (!) Warning: path for analyzer output does not exist  \"" + analyzer.outPath + "\", ignored")
+
+
 
 
         

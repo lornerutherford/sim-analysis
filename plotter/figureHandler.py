@@ -107,15 +107,16 @@ def make_plots(plotList, gridData, dumpNumber):
                 
                 
                 
-            if plotter.save_fig:
+            if plotter.save_fig > 0:
+                sequenceFormat = "{:0" + str(plotter.save_fig) + "}"
                 if isinstance(plotter, PlotterPhaseSpace):
-                    plt.savefig(plotter.outPath + "PhaseSpace_" + str(phaseSpaceCounter) +"_direction_" + plotter.direction + "_" + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
+                    plt.savefig(plotter.outPath + "PhaseSpace_" + str(phaseSpaceCounter) +"_direction_" + plotter.direction + "_" + str(sequenceFormat.format(dumpNumber)) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 if isinstance(plotter, PlotterHist):
-                    plt.savefig(plotter.outPath + "XY_" + str(plotXYCounter) + "_" + plotter.quantx + "_"  + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
+                    plt.savefig(plotter.outPath + "XY_" + str(plotXYCounter) + "_" + plotter.quantx + "_"  + str(sequenceFormat.format(dumpNumber)) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, Plotter2D):
-                    plt.savefig(plotter.outPath + "Plot2D_" + str(plot2DCounter) + "_" + str(dumpNumber)+ ".png",  dpi= plotter.dpi, bbox_inches='tight')
+                    plt.savefig(plotter.outPath + "Plot2D_" + str(plot2DCounter) + "_" + str(sequenceFormat.format(dumpNumber))+ ".png",  dpi= plotter.dpi, bbox_inches='tight')
                 elif isinstance(plotter, MultiPlot):
-                    plt.savefig(plotter.outPath + "MultiPlot_" + str(multiCounter) + "_" + str(dumpNumber) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
+                    plt.savefig(plotter.outPath + "MultiPlot_" + str(multiCounter) + "_" + str(sequenceFormat.format(dumpNumber)) + ".png",  dpi= plotter.dpi, bbox_inches='tight')
             plt.show()
                        
             plt.close(fig)
