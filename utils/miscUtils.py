@@ -101,12 +101,12 @@ def export(data, dumpObj, plotter, prefix = ""):
     elif isinstance(dumpObj, (FieldLine,ParticlesLine)):
         name = "LinePtcl" if isinstance(dumpObj, ParticlesLine) else "LineFld"
         path = plotter.outPath + name + "//"
-        name += "_x=" +  str(dumpObj.x_range) + "_y=" +  str(dumpObj.y_range) +"_z=" +  str(dumpObj.z_range)
+        name += "_quant=" + str(line.quantity) + "_x=" +  str(dumpObj.x_range) + "_y=" +  str(dumpObj.y_range) +"_z=" +  str(dumpObj.z_range)
        
     if prefix is not "":
         prefix += "_"
     create_directory(path)
-    # outfile = path  + str(name)+ "_" + str(prefix) + str(plotter.dumpNumber) +".txt"
+    outfile = path  + str(name)+ "_" + str(prefix) + str(plotter.dumpNumber) +".txt"
     np.savetxt(outfile, data, fmt='%.9f', delimiter='    ', newline='\n', header= '', footer='', comments='')
 
 
