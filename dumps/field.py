@@ -48,7 +48,8 @@ class Field(Dump):
         
 
     def addLine(self, component = 0, axis = "x", x_range = None, y_range = None, z_range = None, show_range = 0,\
-                operation = "mean", tick_min = None, tick_max = None, color = None, force_color = 0, invert_axis = 0,\
+                operation = "mean", calculus = None, normalize = None, gauge = None,\
+                tick_min = None, tick_max = None, color = None, force_color = 0, invert_axis = 0,\
                 show_axis = 1, z_order = 3, export = 0, plot_data = 1):
         """
         Interface for Line operations on Field dumps
@@ -81,7 +82,18 @@ class Field(Dump):
         operation: string
             When the ranges define a plane or volume, their values are processed based on the operation variable
             Can be "mean" for average or "sum" for sum
+
+        calculus: string
+            Performs an additional calculus operation on the generated line, e.g. for calculating the electrostatic potential from an electric field.
+            Can be "integrate" or "differentiate"
         
+        normalize: float
+            Applies a factor to the line, can be used for normalization.
+        
+        gauge: string ot float
+            Applies an offset to the line, i.e. shifting the zero crossing of the line. Useful in combination with calculus operations to provide a gauge.
+            Can be "min" or "max" or an arbitrary float
+
         tick_min: float
             Defines mininmal value for Line axis tick labels
             
@@ -124,7 +136,9 @@ class Field(Dump):
             tick_max = max(dummy)
       
         newLineObj = FieldLine(component = component,  axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
-                               show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max,\
+                               show_range = show_range, operation = operation,\
+                               calculus = calculus, normalize = normalize, gauge = gauge,\
+                               tick_min = tick_min, tick_max = tick_max,\
                                color = color, force_color= force_color, invert_axis= invert_axis, show_axis = show_axis,\
                                z_order = z_order, export = export, plot_data = plot_data)
                 
@@ -141,11 +155,13 @@ class FieldLine(Line):
     """
     
     def __init__(self, component = None, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, \
-                 operation = None, tick_min = None, tick_max = None,  color = None, force_color = None, invert_axis = None, \
+                 operation = None, calculus = None, normalize = None, gauge = None,\
+                 tick_min = None, tick_max = None,  color = None, force_color = None, invert_axis = None, \
                  show_axis = None,z_order = None, export = None, plot_data = None):
         
         Line.__init__(self, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
-                      show_range = show_range, operation = operation,tick_min = tick_min, tick_max = tick_max, \
+                      show_range = show_range, operation = operation, calculus = calculus, normalize = normalize, gauge = gauge,\
+                      tick_min = tick_min, tick_max = tick_max, \
                       color = color, force_color = force_color, invert_axis =invert_axis, show_axis = show_axis, z_order = z_order,\
                       export = export, plot_data = plot_data)
 
