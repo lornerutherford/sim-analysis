@@ -326,6 +326,43 @@ def get_line_data_field(line, field, gridData):
             lineY = np.sum(lineY, axis = 0)
         lineX = np.linspace(fU.get_position_from_cellIndex(zMin, "z", gridData), fU.get_position_from_cellIndex(zMax, "z", gridData), num=len(lineY))
     
+
+    if line.calculus != None:
+        if line.calculus == "integrate":
+            # calculate cummulative trapezoidal integral, from box front to box back
+            for i in reversed(range(len(lineY))):
+                lineY[i] = lineY[i+1] + (lineY[i+1] + lineY[i]) / 2. * (lineX[i+1] - lineX[i])
+
+        elif line.calculus == "differentiate":
+            # calculate second order accurate central differences
+            lineY = np.gradient(lineY, lineX, axis = 0, edge_order = 1)
+
+        else:
+            print ("\n(!) Warning: calculus: unrecognised parameter" + str(line.calculus) + ". Ignored\nvalid options are \"integrate\" or \"differentiate\"")
+
+
+    if line.normalize != None:        
+        if isinstance(line.normalize, float):
+            lineY = lineY * line.normalize
+
+        else:
+            print ("\n(!) Warning: normalize: " + str(line.normalize) + " is not a float. Ignored")
+
+    
+    if line.gauge != None:
+        if isinstance(line.gauge, float):
+            lineY = lineY - line.gauge
+        
+        elif line.gauge == "min":
+            lineY = lineY - np.min(lineY)
+
+        elif line.gauge == "max":
+            lineY = lineY - np.max(lineY)
+
+        else:
+            print ("\n(!) Warning: gauge: " + str(line.gauge) + " is neither a float, nor \"min\" or \"max\". Ignored")
+
+
     if field.plane[0] == line.axis: 
         return lineX, lineY, lineBounds 
     else:
