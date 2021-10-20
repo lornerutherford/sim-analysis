@@ -160,18 +160,14 @@ class FieldLine(Line):
                  show_axis = None,z_order = None, export = None, plot_data = None):
         
         Line.__init__(self, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
-                      show_range = show_range, operation = operation, calculus = calculus, normalize = normalize, gauge = gauge,\
-                      tick_min = tick_min, tick_max = tick_max, \
+                      show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max, \
                       color = color, force_color = force_color, invert_axis =invert_axis, show_axis = show_axis, z_order = z_order,\
                       export = export, plot_data = plot_data)
 
         self.component = component
-
-
-
-
-
-
+        self.calculus = calculus
+        self.normalize = normalize
+        self.gauge = gauge
 
 
 def plot_field(ax, plotter, field, gridData):
