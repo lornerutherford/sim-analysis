@@ -85,7 +85,10 @@ class Field(Dump):
 
         calculus: string
             Performs an additional calculus operation on the generated line, e.g. for calculating the electrostatic potential from an electric field.
-            Can be "integrate" or "differentiate"
+            Can be 
+                "cumsum"        - cummulative sum of all values along line (front to back)
+                "integrate"     - cummulative integral of all values along line (front to back)
+                "differentiate" - gradient of the line
         
         normalize: float
             Applies a factor to the line, can be used for normalization.
