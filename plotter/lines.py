@@ -330,7 +330,7 @@ def get_line_data_field(line, field, gridData):
     if line.calculus != None:
 
         if line.calculus == "integrate":
-             # calculate cumulative trapezoidal integral, in negative <axis> direction (usually box front to back)
+            # calculate cumulative trapezoidal integral, in negative <axis> direction (usually box front to back)
             from scipy.integrate import cumulative_trapezoid as ct
             lineY = -1.*(ct(lineY[::-1], lineX[::-1], axis=0, initial=lineY[-1]))[::-1]
             
