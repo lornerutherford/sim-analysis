@@ -331,7 +331,8 @@ def get_line_data_field(line, field, gridData):
         if line.calculus == "integrate":
             # calculate cummulative trapezoidal integral, from box front to box back
             for i in reversed(range(len(lineY))):
-                lineY[i] = lineY[i+1] + (lineY[i+1] + lineY[i]) / 2. * (lineX[i+1] - lineX[i])
+                #lineY[i] = lineY[i+1] + (lineY[i+1] + lineY[i]) / 2. * (lineX[i+1] - lineX[i])
+                lineY=(np.cumsum(lineY[::-1])*(lineX[1] - lineX[0]))[::-1]
 
         elif line.calculus == "differentiate":
             # calculate second order accurate central differences
