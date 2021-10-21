@@ -328,14 +328,22 @@ def get_line_data_field(line, field, gridData):
     
 
     if line.calculus != None:
+
         if line.calculus == "integrate":
-            # calculate cummulative trapezoidal integral, from box front to box back
-            for i in reversed(range(len(lineY))):
-                lineY[i] = lineY[i+1] + (lineY[i+1] + lineY[i]) / 2. * (lineX[i+1] - lineX[i])
+             # calculate cumulative trapezoidal integral, in negative <axis> direction (usually box front to back)
+            from scipy.integrate import cumulative_trapezoid as ct
+            lineY = -1.*(ct(lineY[::-1], lineX[::-1], axis=0, initial=lineY[-1]))[::-1]
+            
+        
+        elif line.calculus == "cumsum":
+            # calculate cumulative sum of values, in negative <axis> direction (usually box front to back)
+            # (this is similar to integration when additionally normalising with the cell size in <axis> direction, but not equal.
+            # for calculating, e.g., the electrostatic potential from an electric field line, "integrate" is more accurate (but requires scypi))
+            lineY = (np.cumsum(lineY[::-1], axis=0, dtype=np.float32))[::-1]
 
         elif line.calculus == "differentiate":
-            # calculate second order accurate central differences
-            lineY = np.gradient(lineY, lineX, axis = 0, edge_order = 1)
+            # calculate second order accurate central differences, in negative <axis> direction (usually box front to back)
+            lineY = -1.*np.gradient(lineY, lineX, axis = 0, edge_order = 1)
 
         else:
             print ("\n(!) Warning: calculus: unrecognised parameter" + str(line.calculus) + ". Ignored\nvalid options are \"integrate\" or \"differentiate\"")
