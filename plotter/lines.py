@@ -79,13 +79,16 @@ def plot_lines(ax, obj, gridData, plotter ):
                     axLine.plot(x , y , color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width)
 
                     if line.fill != None:
-                        if (isinstance(line.fill, (list,tuple)) and (len(line.fill) == 2) and isinstance(line.fill[1], float) and (line.fill[0] == "above" or "below")):
+                        if (isinstance(line.fill, (list,tuple)) and (len(line.fill) == 2) and isinstance(line.fill[1], float) and (line.fill[0] == "above" or "above_min" or "below" or "below_max")):
                             
                             if line.fill[0] == "above":
-                                axLine.fill_between(x, y, line.fill[1], where = y >= line.fill[1], alpha = 0.1, color = line.color, zorder = line.z_order)
+                                axLine.fill_between(x, y, line.fill[1], where = y >= line.fill[1], interpolate = True, alpha = 0.1, color = line.color, zorder = line.z_order)
+                            elif line.fill[0] == "above_min":
+                                axLine.fill_between(x, y, np.min(y)+line.fill[1], where = y >= np.min(y)+line.fill[1], interpolate = True, alpha = 0.1, color = line.color, zorder = line.z_order)
                             elif line.fill[0] == "below":
-                                axLine.fill_between(x, y, line.fill[1], where = y <= line.fill[1], alpha = 0.1, color = line.color, zorder = line.z_order)
-                        
+                                axLine.fill_between(x, y, line.fill[1], where = y <= line.fill[1], interpolate = True, alpha = 0.1, color = line.color, zorder = line.z_order)
+                            elif line.fill[0] == "below_max":
+                                axLine.fill_between(x, y, np.max(y)+line.fill[1], where = y <= np.max(y)+line.fill[1], interpolate = True, alpha = 0.1, color = line.color, zorder = line.z_order)
                         else:
                             print ("\n(!) Warning: fill: expected format is [\"above\", float] or [\"below\", float]. Ignored")
                        
