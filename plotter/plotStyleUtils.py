@@ -90,6 +90,8 @@ def get_label_from_key(key):
             quantity = "$\mathit{J}$"
         elif quantity == "chargedens":
             return "$\mathit{\\rho}$"
+        elif quantity == "dummy_potential":
+            return "$\mathit{\\Delta\\psi}$"
         
         if comp == "0":
             comp = "$_{\mathrm{x}}$"
@@ -266,6 +268,9 @@ def get_unit_from_component(key):
 
     elif key.find("electric") > -1:
         return "GV m$^{-1}$"
+
+    elif key.find("dummy_potential") > -1:
+        return "e m$_{\mathrm{e}}$$^{\mathrm{-1}}$c$^{\mathrm{-2}}$"
     
     elif key.find("magnetic") > -1:
         return "T"

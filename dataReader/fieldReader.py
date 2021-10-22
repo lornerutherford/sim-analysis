@@ -121,7 +121,7 @@ def load_field_file_vsim(pathToData, dumpNumber, currentSpecies, fldObj, gridDat
                    
             
             # do unit conversion here
-            if fldObj.kind.lower() == "electric":
+            if fldObj.kind.lower() == "electric" or "dummy_potential":
                 fldObj.fieldMatrix = fldObj.fieldMatrix / 1.0e9
                 
             if fldObj.kind.lower() == "chargedens":
