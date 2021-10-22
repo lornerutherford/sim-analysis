@@ -11,7 +11,7 @@ class Line(object):
     """
     
     def __init__(self, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, tick_min = None, tick_max = None,\
-                 invert_axis = None, show_axis = None, color = None, force_color = None, z_order = None, export = None, plot_data = None):
+                 invert_axis = None, show_axis = None, color = None, force_color = None, z_order = None, export = None, plot_data = None, fill = None):
         
         self.axis = axis
         
@@ -36,6 +36,7 @@ class Line(object):
 
         self.export = export
         self.plot_data = plot_data
+        self.fill = fill
 
 
 def plot_lines(ax, obj, gridData, plotter ):
@@ -76,6 +77,18 @@ def plot_lines(ax, obj, gridData, plotter ):
                 if line.axis == line.plane[0]:
                     axLine = ax.twinx() if counter == 0 else axLine
                     axLine.plot(x , y , color = line.color, zorder = line.z_order, ls = line.line_style , lw = line.line_width)
+
+                    if line.fill != None:
+                        if (isinstance(line.fill, (list,tuple)) and (len(line.fill) == 2) and isinstance(line.fill[1], float) and (line.fill[0] == "above" or "below")):
+                            
+                            if line.fill[0] == "above":
+                                axLine.fill_between(x, y, line.fill[1], where = y >= line.fill[1], alpha = 0.1, color = line.color, zorder = line.z_order)
+                            elif line.fill[0] == "below":
+                                axLine.fill_between(x, y, line.fill[1], where = y <= line.fill[1], alpha = 0.1, color = line.color, zorder = line.z_order)
+                        
+                        else:
+                            print ("\n(!) Warning: fill: expected format is [\"above\", float] or [\"below\", float]. Ignored")
+                       
                     if line.export:
                         export(np.column_stack( (x - 0.5*cellSizeX,y) ), line, plotter)
                     

@@ -182,7 +182,7 @@ class Particles(Dump):
 
     def addLine(self, axis = "x", quantity = None, bin_size = 0.2, x_range = None, y_range = None, z_range = None, show_range = 0, \
                 operation = "mean", tick_min = None, tick_max = None, color = None, force_color= 0, invert_axis = 0,\
-                show_axis = 1, z_order = 3, export = 0, plot_data = 1):
+                show_axis = 1, z_order = 3, export = 0, plot_data = 1, fill = None):
         """
         Interface for Line operations on Particles dumps. 
         User can define line or volume from which to extract data by using range-variables
@@ -277,7 +277,7 @@ class Particles(Dump):
         
         newLineObj = ParticlesLine(quantity = quantity, bin_size = bin_size, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, \
                                    show_range = show_range, operation = operation, tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color, invert_axis = invert_axis,\
-                                   show_axis = show_axis, z_order=z_order, export=export, plot_data = plot_data)
+                                   show_axis = show_axis, z_order=z_order, export=export, plot_data = plot_data, fill = fill)
                 
         if self.lines is None:
             self.lines = []
@@ -293,11 +293,11 @@ class ParticlesLine(Line):
     
     def __init__(self, quantity = None, bin_size = None, axis = None,  x_range = None, y_range = None, z_range = None, show_range = None, operation = None, \
                  tick_min = None, tick_max = None, color = None, force_color = None, invert_axis = None, show_axis = None, z_order = None, export = None, \
-                 plot_data = None):
+                 plot_data = None, fill = None):
         
         Line.__init__(self, axis = axis, x_range = x_range, y_range = y_range, z_range = z_range, show_range = show_range, operation = operation, \
                       tick_min = tick_min, tick_max = tick_max, color = color, force_color = force_color,invert_axis = invert_axis, \
-                      show_axis = show_axis,z_order = z_order, export = export, plot_data = plot_data)
+                      show_axis = show_axis,z_order = z_order, export = export, plot_data = plot_data, fill = fill)
         
         self.quantity = quantity
         self.bin_size = bin_size
