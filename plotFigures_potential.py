@@ -41,7 +41,9 @@ trapping_potential.addLine(component= 0, axis="x", x_range=[0,1000], z_range=[-0
                         operation = "mean", tick_min = None, tick_max = None, invert_axis = 0, show_axis = 1, color = "purple", force_color = 1, \
                         z_order = None, export = 0, plot_data = 1, \
                         # the calculation of the trapping potential happens here (integrate, normalise, gauge):
-                        calculus = "integrate", normalize = -1./511.7066619, gauge = "max")    
+                        calculus = "integrate", normalize = -1./511.7066619, gauge = "max", \
+                        # add shaded area to show trapping region (here set to -0.5 for demonstration, for an actual trapping potential with gauge = "max" it would be -1.)
+                        fill = ["below", -0.5])    
 
 
 # plot both field objets
