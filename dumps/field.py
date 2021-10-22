@@ -124,6 +124,12 @@ class Field(Dump):
         plot_data: bool
             Plot data or not
 
+        fill: [<option>, <threshold>]
+            Generates a shaded area between the line and <treshold>, according to <option>
+            <option> accepts "above" or "below" for filling the area between the line and an absolute threshold,
+            or "above_min" or "below_max" for thresholds relative to the global minimum or maximum value of the line.
+            <threshold> must be float.
+
         Returns
         -------
         Line object that controls line plotting with Field objects 

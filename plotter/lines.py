@@ -90,7 +90,7 @@ def plot_lines(ax, obj, gridData, plotter ):
                             elif line.fill[0] == "below_max":
                                 axLine.fill_between(x, y, np.max(y)+line.fill[1], where = y <= np.max(y)+line.fill[1], interpolate = True, alpha = 0.1, color = line.color, zorder = line.z_order)
                         else:
-                            print ("\n(!) Warning: fill: expected format is [\"above\", float] or [\"below\", float]. Ignored")
+                            print ("\n(!) Warning: fill: expected format is [<option>, <threshold>]. Ignored.\n   <option> accepts: \"above\", \"below\", \"above_min\", \"below_max\".\n   <threshold> must be float.")
                        
                     if line.export:
                         export(np.column_stack( (x - 0.5*cellSizeX,y) ), line, plotter)
